@@ -1,0 +1,60 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+
+  background-color: white;
+  color: black;
+
+  width: 90%;
+  margin: 0 auto;
+}
+
+a:link, a:visited { color: royalblue; text-decoration: none; }
+a:hover { color: blue; text-decoration: underline; font-weight: 500;  }
+a:active { color: white; }
+
+h1 {
+  color: green;
+}
+
+/* https://css-tricks.com/snippets/css/simple-and-nice-blockquote-styling/ */
+blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+  quotes: "\201C""\201D""\2018""\2019";
+}
+
+footer  {
+  clear: both;
+  font-size: 60%;
+  margin-top: 3em;
+}
+
+#mainnav {
+  padding: 0 0;
+  margin-bottom: 22px;
+}
+
+#mainnav ul {
+  margin: 0 0 0 0;
+  padding: 0;
+  list-style-type: none;
+  border-left: 1px solid black;
+}
+
+#mainnav li {
+  display: inline;
+  padding: 0 10px;
+  border-right: 1px solid black;
+}
+
+h3.textcal {
+  color: green;
+  margin-bottom: 0;
+}
+
+p.textcal {
+  color: black;
+  margin-top: 0;
+}
