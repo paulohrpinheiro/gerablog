@@ -4,7 +4,7 @@ require_relative 'render'
 module GeraBlog
   # Blog
   class Blog
-    attr_reader :root_dir,:output_dir, :texts_dir, :template_dir
+    attr_reader :root_dir,:output_dir, :texts_dir, :template_dir, :assets_dir
     attr_reader :title, :name, :description
     attr_reader :template, :posts
 
@@ -24,6 +24,7 @@ module GeraBlog
       @output_dir = File.join(@root_dir, 'output')
       @texts_dir = File.join(@root_dir, 'texts')
       @template_dir = File.join(@root_dir, 'templates')
+      @assets_dir = File.join(@root_dir, 'assets')
       @template = {
         categories: File.join(@template_dir, 'categories.html.erb'),
         feed: File.join(@template_dir, 'feed.xml.erb'),
@@ -35,12 +36,17 @@ module GeraBlog
     def save
       Dir.mkdir(@output_dir) unless Dir.exist?(@output_dir)
 
+      assets_src = File.join __dir__, '..', '..', 'assets'
+      FileUtils.cp_r(
+        assets_src,
+        File.join(output_dir, 'assets')
+      ) if Dir.exist?(assets_src)
+
       @posts.map { |p| p[:category] }.uniq.each do |category|
         category_dir = File.join(@output_dir, category)
-        image_src = File.join @root_dir, 'texts', category, 'images'
-
         Dir.mkdir(category_dir) unless Dir.exist?(category_dir)
 
+        image_src = File.join @root_dir, 'texts', category, 'images'
         FileUtils.cp_r(
           image_src,
           File.join(category_dir, 'images')
