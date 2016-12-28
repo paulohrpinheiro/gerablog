@@ -63,9 +63,9 @@ If `--root` is not informed, root will be `./`.
 
 ## `-g` or `--generate`
 
-    For my [blog](https://paulohrpinheiro.xyz):
+For my [blog](https://paulohrpinheiro.xyz):
 
-    ➤ ~/Dropbox/projetos/gerablog/bin/gerablog --generate --root ~/Dropbox/projetos/paulohrpinheiro.xyz/blog
+    ➤ gerablog --generate --root ~/Dropbox/projetos/paulohrpinheiro.xyz/blog
     2016-12-24-nova-versao-do-ruby-txt2tags.html
     2016-12-16-ruby-e-o-deep-copy.html
     2016-11-08-iniciando-no-ruby.html
