@@ -16,7 +16,7 @@ module GeraBlog
 
     def html_escape(string)
       string.gsub(
-        %r{ ['&\"<>\/] },
+        %r{['&\"<>\/]},
         '&' => '&amp;',
         '<' => '&lt;',
         '>' => '&gt;',
