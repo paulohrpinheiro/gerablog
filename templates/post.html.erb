@@ -8,8 +8,11 @@
   <meta name="description" content="<%= post[:description] %>">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <link href="../assets/css/gerablog.css" rel="stylesheet">
-  <link href="../assets/css/prism.css" rel="stylesheet">
+  <link rel="alternate" type="application/rss+xml" title="RSS Feed for <%= blog[:title] %>" href="../feed.xml" />
+  <%= blog[:feeds] %>
+
+  <link rel="stylesheet" href="../assets/css/gerablog.css">
+  <link  rel="stylesheet" href="../assets/css/prism.css">
 
 </head>
 
