@@ -49,15 +49,24 @@ Yes, we have a `--help` option:
         -c, --create                     Create a new project
         -g, --generate                   Generate the static blog.
 
-###  `-c` or `--create`
+###  `-n` or `--new`
 
 Create a new project:
 
-    ➤ gerablog --create --root /tmp/teste
-    /tmp/teste
-    /tmp/teste/output
-    /tmp/teste/texts
-    /tmp/teste/templates
+    ➤ gerablog --new --root /tmp/test
+
+How the project looks like?
+
+    ➤ tree /tmp/test
+    /tmp/test
+    ├── gerablog.conf
+    ├── output
+    ├── templates
+    │   └── templates
+    │       ├── categories.html.erb
+    │       ├── feed.xml.erb
+    │       └── post.html.erb
+    └── texts
 
 If `--root` is not informed, root will be `./`.
 
