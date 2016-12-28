@@ -1,23 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"
-  xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <author>
-    <name><%= @feed[:name] %></name>
-  </author>
-  <id><%= @feed[:address] %></id>
-  <title><%= @feed[:title] %></title>
-  <updated><%= @feed[:date] %></updated>
+<?xml version="1.0"?>
 
-<% for @entry in @posts -%>
-  <entry>
-    <id><%= @entry[:url] %></id>
-    <link href="<%= @entry[:url]"/>
-    <title><%= @entry[:title]</title>
-    <updated><%= @entry[:date]</updated>
-    <dc:date><%= @entry[:date]</dc:date>
-  </entry>
+<rss version="2.0">
+  <channel>
+    <title><%= blog.name %></title>
+    <link><%= blog.url %></link>
+    <description><%= blog.description %></description>
+    <language><%= blog.language %></language>
+
+<% for post in posts -%>
+    <item>
+      <title><%= post[:title] %></title>
+      <link><%= post[:url] %></link>
+      <description><%= post[:description] %></description>
+      <pubDate><%= post[:date] %></pubDate>
+    </item>
 <% end -%>
 
-  <dc:date><%= @feed_dte %></dc:date>
-</feed>
-~
+  </channel>
+</rss>

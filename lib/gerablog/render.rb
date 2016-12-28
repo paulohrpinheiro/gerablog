@@ -35,7 +35,7 @@ module GeraBlog
         name: blog.name,
         title: blog.title,
         description: blog.description,
-        categories: '<hr></p><strong>TO DO</strong></p><hr>'
+        categories: blog.categories
       }
       @render = Redcarpet::Markdown.new(CustomRender.new(lang: lang))
     end
