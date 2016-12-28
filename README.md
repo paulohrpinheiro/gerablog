@@ -145,7 +145,7 @@ More some days.
 - [ ] General RSS Feed
 - [ ] By topic RSS feed
 - [ ] Tests!!!!!
-- [ ] create project in command line
+- [x] create project in command line
 - [x] more complete command line options
 - [ ] Gemfile
 - [ ] Txt2tags support
