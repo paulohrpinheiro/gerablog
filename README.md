@@ -1,6 +1,8 @@
 # GeraBlog
 
-*Blog Generator - my own static site generator *
+*Blog Generator - my own static site generator*
+
+Write in *Markdown*, publish in *HTML*.
 
 
 ## Status
@@ -22,9 +24,10 @@ More some days.
 
 ## TODO
 
+- [ ] General RSS Feed
+- [ ] By topic RSS feed
 - [ ] Tests!!!!!
 - [ ] create project in command line
 - [ ] more complete command line options
-- [ ] General RSS Feed
-- [ ] By topic RSS feed
 - [ ] Gemfile
+- [ ] Txt2tags support
