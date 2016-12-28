@@ -53,11 +53,21 @@ if options[:generate]
   gb.save
   gb.posts.map { |p| puts File.basename(p[:filename]) }
 elsif options[:new]
-  [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir].each do |dir|
+  [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir, gb.assets_dir].each do |dir|
     Dir.mkdir(dir) unless Dir.exist?(dir)
   end
 
-  FileUtils.cp_r File.join(__dir__, '..', 'templates'), gb.template_dir
+  FileUtils.cp_r(
+    File.join(__dir__, '..', 'assets'),
+    gb.assets_dir,
+    remove_destination: true
+  )
+
+  FileUtils.cp_r(
+    File.join(__dir__, '..', 'templates'),
+    gb.template_dir,
+    remove_destination:true
+  )
 
   config = ParseConfig.new
   config.add 'blog', {
