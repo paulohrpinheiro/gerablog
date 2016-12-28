@@ -51,7 +51,7 @@ gb.load_config options[:config] unless options[:config].nil?
 if options[:generate]
   gb.render!
   gb.save
-  gb.posts.map { |p| puts File.basename(p[:filename]) }
+  puts gb.posts.map { |p| p[:category] }.uniq
 elsif options[:new]
   [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir, gb.assets_dir].each do |dir|
     Dir.mkdir(dir) unless Dir.exist?(dir)
@@ -71,9 +71,11 @@ elsif options[:new]
 
   config = ParseConfig.new
   config.add 'blog', {
+    url: gb.url,
     title: gb.title,
     name: gb.name,
-    description: gb.description
+    description: gb.description,
+    language: gb.language
   }
   config.add 'template', {
     categories: gb.template[:categories],

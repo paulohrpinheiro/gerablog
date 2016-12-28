@@ -4,22 +4,26 @@ require_relative 'render'
 module GeraBlog
   # Blog
   class Blog
-    attr_reader :title, :name, :description
+    attr_reader :title, :name, :description, :url, :language
     attr_reader :root_dir, :output_dir, :texts_dir, :template_dir, :assets_dir
-    attr_reader :template, :posts
+    attr_reader :template, :posts, :categories
 
     @posts = []
 
     def initialize(
       root_dir: './',
+      url: 'http://localhost:8080',
       title: 'GeraBlog',
       name: 'GeraBlog Static Blog Generator',
-      description: 'Blog Generator - my own static site generator'
+      description: 'Blog Generator - my own static site generator',
+      language: 'pt-br'
     )
       @root_dir = root_dir
+      @url = url
       @title = title
       @name = name
       @description = description
+      @language = language
       @output_dir = File.join(@root_dir, 'output')
       @texts_dir = File.join(@root_dir, 'texts')
       @template_dir = File.join(@root_dir, 'templates')
@@ -34,9 +38,11 @@ module GeraBlog
     def load_config(config_file)
       config = ParseConfig.new(config_file)
 
+      @url = config['blog']['url']
       @title = config['blog']['title']
       @name = config['blog']['name']
       @description = config['blog']['description']
+      @language = config['blog']['language']
 
       @root_dir = config['dir']['root']
       @output_dir = config['dir']['output']
@@ -49,11 +55,9 @@ module GeraBlog
         feed: config['template']['feed'],
         post: config['template']['post']
       }
-puts @texts_dir
     end
 
     def save
-      puts @output_dir
       Dir.mkdir(@output_dir) unless Dir.exist?(@output_dir)
 
       assets_src = File.join __dir__, '..', '..', 'assets'
@@ -78,14 +82,28 @@ puts @texts_dir
 
     def render!
       @posts = render
+
+      rss_all = []
+      rss_category = []
+
+      parser = Erubis::Eruby.new File.read(@template[:feed])
+      File.write(
+        File.join(@output_dir, 'feed.rss'),
+        parser.result(blog: self, posts: @posts)
+      )
     end
 
     def render
-      posts = []
+      c_dir = Dir[File.join(@texts_dir, '*')]
+      categories_dir = Hash[c_dir.map { |d| File.basename d }.zip c_dir]
+      @categories =
+        %(<nav id="mainnav">\n<ul>\n) +
+        categories_dir.keys.map { |c| %(<li><a href="../texts/#{c}">#{c.capitalize}</a></li>) }.join("\n") +
+        %(</ul>\n</nav>\n)
 
-      Dir[File.join(@texts_dir, '*')].each do |category_dir|
-        category = File.basename category_dir
-        Dir["#{category_dir}/*.md"]
+      posts = []
+      categories_dir.each do |category,dir|
+        Dir["#{dir}/*.md"]
           .sort
           .reverse
           .map { |f| posts.push render_page(filename: f, category: category) }
@@ -105,7 +123,8 @@ puts @texts_dir
         description: lines[2][3..-1],
         date: Date.parse(newfile.match('\A(....-..-..)')[1]).rfc822,
         content: md_content,
-        filename: File.join(@output_dir, category, newfile)
+        filename: File.join(@output_dir, category, newfile),
+        url: File.join(self.url, 'texts', category, newfile)
       }
 
       post[:content] = GeraBlog::Render
