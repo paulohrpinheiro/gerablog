@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
+require 'fileutils'
 
 require_relative '../lib/gerablog'
 
@@ -14,14 +15,42 @@ optparse = OptionParser.new do |opts|
     exit
   end
 
-  options[:root] = '.'
-  opts.on('-r', '--root FILENAME') do |dir|
+  default_root = GeraBlog::Blog.new().root_dir
+  options[:root] = default_root
+  opts.on(
+    '-r',
+    "--root FILENAME (default '#{default_root}')",
+    'Root dir for project'
+  ) do |dir|
     options[:root] = dir
+  end
+
+  options[:create] = false
+  opts.on('-c','--create', 'Create a new project') do |create|
+    options[:create] = create
+  end
+
+  options[:generate] = false
+  opts.on('-g','--generate', 'Generate the static blog.') do |generate|
+    options[:generate] = generate
   end
 end
 
 optparse.parse!
+
 gb = GeraBlog::Blog.new(root_dir: options[:root])
 
-gb.render!
-gb.save
+if options[:generate]
+  gb.render!
+  gb.save
+  gb.posts.map { |p| puts File.basename(p[:filename]) }
+elsif options[:create]
+  [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir].each do |dir|
+    puts File.dir
+    Dir.mkdir(dir) unless Dir.exist?(dir)
+  end
+
+  FileUtils.cp_r File.join(__dir__, '..', 'templates'), gb.template_dir
+else
+  puts optparse.parse! %w[--help]
+end

@@ -1,13 +1,12 @@
-require 'erb'
 require 'date'
 require_relative 'render'
 
 module GeraBlog
   # Blog
   class Blog
-    attr_reader :root_dir, :title, :name, :description, :output_dir
-    attr_reader :template
-    attr_reader :posts
+    attr_reader :root_dir,:output_dir, :texts_dir, :template_dir
+    attr_reader :title, :name, :description
+    attr_reader :template, :posts
 
     @posts = []
 
@@ -24,10 +23,11 @@ module GeraBlog
       @description = description
       @output_dir = File.join(@root_dir, 'output')
       @texts_dir = File.join(@root_dir, 'texts')
+      @template_dir = File.join(@root_dir, 'templates')
       @template = {
-        categories: File.join(@root_dir, 'templates/categories.html.erb'),
-        feed: File.join(@root_dir, 'templates/feed.xml.erb'),
-        post: File.join(@root_dir, 'templates/post.html.erb')
+        categories: File.join(@template_dir, 'categories.html.erb'),
+        feed: File.join(@template_dir, 'feed.xml.erb'),
+        post: File.join(@template_dir, 'post.html.erb')
       }
 
     end
@@ -37,12 +37,17 @@ module GeraBlog
 
       @posts.map { |p| p[:category] }.uniq.each do |category|
         category_dir = File.join(@output_dir, category)
+        image_src = File.join @root_dir, 'texts', category, 'images'
+
         Dir.mkdir(category_dir) unless Dir.exist?(category_dir)
+
+        FileUtils.cp_r(
+          image_src,
+          File.join(category_dir, 'images')
+        ) if Dir.exist?(image_src)
       end
 
-      @posts.each do |post|
-        File.write(post[:filename], post[:content])
-      end
+      @posts.map { |post| File.write(post[:filename], post[:content]) }
     end
 
     def render!
@@ -80,7 +85,6 @@ module GeraBlog
       post[:content] = GeraBlog::Render
         .new(lang: category, blog: self)
         .to_html(post: post)
-puts post[:content]
 
       post
     end
