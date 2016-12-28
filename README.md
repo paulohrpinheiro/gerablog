@@ -74,7 +74,7 @@ If `--root` is not informed, root will be `./`.
 
 For my [blog](https://paulohrpinheiro.xyz):
 
-    ➤ gerablog --generate --root ~/Dropbox/projetos/paulohrpinheiro.xyz/blog
+    ➤ gerablog --generate --conf ~/Dropbox/projetos/paulohrpinheiro.xyz/blog/gerablog.conf
     2016-12-24-nova-versao-do-ruby-txt2tags.html
     2016-12-16-ruby-e-o-deep-copy.html
     2016-11-08-iniciando-no-ruby.html
