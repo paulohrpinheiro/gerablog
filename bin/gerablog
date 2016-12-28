@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'fileutils'
+require 'parseconfig'
 
 require_relative '../lib/gerablog'
 
@@ -15,24 +16,29 @@ optparse = OptionParser.new do |opts|
     exit
   end
 
+  options[:config] = nil
+  opts.on('-c', '--config FILENAME', 'Use a config file.') do |value|
+    options[:config] = value
+  end
+
   default_root = GeraBlog::Blog.new().root_dir
   options[:root] = default_root
   opts.on(
     '-r',
     "--root FILENAME (default '#{default_root}')",
     'Root dir for project'
-  ) do |dir|
-    options[:root] = dir
+  ) do |value|
+    options[:root] = value
   end
 
-  options[:create] = false
-  opts.on('-c','--create', 'Create a new project') do |create|
-    options[:create] = create
+  options[:new] = false
+  opts.on('-n','--new', 'Create a new project.') do
+    options[:new] = true
   end
 
   options[:generate] = false
-  opts.on('-g','--generate', 'Generate the static blog.') do |generate|
-    options[:generate] = generate
+  opts.on('-g','--generate', 'Generate the static blog.') do |value|
+    options[:generate] = value
   end
 end
 
@@ -40,17 +46,39 @@ optparse.parse!
 
 gb = GeraBlog::Blog.new(root_dir: options[:root])
 
+gb.load_config options[:config] unless options[:config].nil?
+
 if options[:generate]
   gb.render!
   gb.save
   gb.posts.map { |p| puts File.basename(p[:filename]) }
-elsif options[:create]
+elsif options[:new]
   [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir].each do |dir|
-    puts File.dir
     Dir.mkdir(dir) unless Dir.exist?(dir)
   end
 
   FileUtils.cp_r File.join(__dir__, '..', 'templates'), gb.template_dir
+
+  config = ParseConfig.new
+  config.add 'blog', {
+    title: gb.title,
+    name: gb.name,
+    description: gb.description
+  }
+  config.add 'template', {
+    categories: gb.template[:categories],
+    feed: gb.template[:feed],
+    post: gb.template[:post]
+  }
+  config.add 'dir', {
+    root: gb.root_dir,
+    texts: gb.texts_dir,
+    assets: gb.assets_dir,
+    output: gb.output_dir,
+    template: gb.template_dir
+  }
+  file = File.open(File.join(gb.root_dir, 'gerablog.conf'), 'w')
+  config.write(file)
 else
   puts optparse.parse! %w[--help]
 end

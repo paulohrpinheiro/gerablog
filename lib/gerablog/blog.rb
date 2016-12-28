@@ -4,8 +4,8 @@ require_relative 'render'
 module GeraBlog
   # Blog
   class Blog
-    attr_reader :root_dir,:output_dir, :texts_dir, :template_dir, :assets_dir
     attr_reader :title, :name, :description
+    attr_reader :root_dir, :output_dir, :texts_dir, :template_dir, :assets_dir
     attr_reader :template, :posts
 
     @posts = []
@@ -16,7 +16,6 @@ module GeraBlog
       name: 'GeraBlog Static Blog Generator',
       description: 'Blog Generator - my own static site generator'
     )
-
       @root_dir = root_dir
       @title = title
       @name = name
@@ -30,10 +29,31 @@ module GeraBlog
         feed: File.join(@template_dir, 'feed.xml.erb'),
         post: File.join(@template_dir, 'post.html.erb')
       }
+    end
 
+    def load_config(config_file)
+      config = ParseConfig.new(config_file)
+
+      @title = config['blog']['title']
+      @name = config['blog']['name']
+      @description = config['blog']['description']
+
+      @root_dir = config['dir']['root']
+      @output_dir = config['dir']['output']
+      @texts_dir = config['dir']['texts']
+      @template_dir = config['dir']['template']
+      @assets_dir = config['dir']['assets']
+
+      @template = {
+        categories: config['template']['categories'],
+        feed: config['template']['feed'],
+        post: config['template']['post']
+      }
+puts @texts_dir
     end
 
     def save
+      puts @output_dir
       Dir.mkdir(@output_dir) unless Dir.exist?(@output_dir)
 
       assets_src = File.join __dir__, '..', '..', 'assets'
