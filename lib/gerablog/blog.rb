@@ -45,7 +45,7 @@ module GeraBlog
       @config = ParseConfig.new(config_file)
     end
 
-    def render!
+    def save
       @posts = render
 
       testdir = @config['dir']['output']
