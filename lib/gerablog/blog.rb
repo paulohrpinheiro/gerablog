@@ -124,20 +124,25 @@ module GeraBlog
       c_dir = Dir[File.join(@config['dir']['texts'], '*')]
       categories_dir = Hash[c_dir.map { |d| File.basename d }.zip c_dir]
       parser = Erubis::Eruby.new File.read(@config['template']['categories'])
-      @categories = parser.result(categories: categories_dir)
+      categories = parser.result(categories: categories_dir)
 
       posts = []
       categories_dir.each do |category, dir|
-        Dir["#{dir}/*.md"]
-          .sort
-          .reverse
-          .map { |f| posts.push render_post(filename: f, category: category) }
+        Dir["#{dir}/*.md"].sort.reverse.each do |file|
+          posts.push(
+            render_post(
+              filename: file,
+              category: category,
+              categories: categories
+            )
+          )
+        end
       end
 
       posts
     end
 
-    def render_post(filename:, category:)
+    def render_post(filename:, category:, categories:)
       md_content = File.read(filename)
       lines = md_content.split("\n")
       newfile = File.basename(filename).sub(/md$/, 'html')
@@ -151,9 +156,10 @@ module GeraBlog
         filename: File.join(@config['dir']['output'], category, newfile),
         url: File.join(@config['blog']['url'], 'texts', category, newfile)
       }
-
-      post[:content] = GeraBlog::Markdown.new(lang: category, blog: @config)
-                                           .to_html(post: post)
+      post[:content] = GeraBlog::Markdown.new(
+        lang: category,
+        blog: @config
+      ).to_html(post: post, categories: categories)
 
       post
     end

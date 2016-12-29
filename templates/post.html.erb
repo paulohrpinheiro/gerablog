@@ -10,7 +10,7 @@
 
   <link rel="alternate" type="application/rss+xml" title="RSS Feed for <%= blog[:title] %>" href="../feed.xml" />
 
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/gerablog.css">
   <link rel="stylesheet" href="../assets/css/prism.css">
 
@@ -20,7 +20,7 @@
   <header>
     <h1><a href="/"><%= blog[:name] %></a></h1>
     <h2><%= blog[:description] %></h2>
-    <%= blog[:categories] %>
+    <%= categories %>
   </header>
   <article>
     <%= post[:converted] %>

@@ -35,10 +35,12 @@ module GeraBlog
       @render = Redcarpet::Markdown.new(CustomRender.new(lang: lang))
     end
 
-    def to_html(post:)
+    def to_html(post:, categories:)
       parser = Erubis::Eruby.new File.read(@template['post'])
       post[:converted] = @render.render(post[:content])
-      parser.result(blog: @blog, post: post)
+      puts '*'*80
+      puts categories
+      parser.result(blog: @blog, post: post, categories: categories)
     end
   end
 end
