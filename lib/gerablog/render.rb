@@ -36,7 +36,7 @@ module GeraBlog
     end
 
     def to_html(post:)
-      parser = Erubis::Eruby.new File.read(@template[:post])
+      parser = Erubis::Eruby.new File.read(@template['post'])
       post[:converted] = @render.render(post[:content])
       parser.result(blog: @blog, post: post)
     end
