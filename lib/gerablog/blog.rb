@@ -4,14 +4,11 @@ require_relative 'render'
 module GeraBlog
   # Blog
   class Blog
-    attr_reader :config
-    attr_reader :posts, :categories
+    attr_reader :config, :posts
 
     @posts = []
 
-    def initialize
-      @config = ParseConfig.new
-
+    def ini_blog
       @config.add 'blog',
                   'root' => '.',
                   'url' => 'http://localhost:8080',
@@ -19,7 +16,9 @@ module GeraBlog
                   'name' => 'GeraBlog Static Blog Generator',
                   'description' => 'GeraBlog - My own static site generator',
                   'language' => 'pt-br'
+    end
 
+    def ini_dir
       root = './'
       @config.add 'dir',
                   'root' => root,
@@ -27,24 +26,29 @@ module GeraBlog
                   'assets' => File.join(root, 'assets'),
                   'output' => File.join(root, 'output'),
                   'template' => File.join(root, 'templates')
+    end
 
+    def full_template_dir(file)
+      File.join @config['dir']['template'], file
+    end
+
+    def ini_template
       @config.add 'template',
-                  'category' => File.join(
-                    @config['dir']['template'],
-                    'category.html.erb'
-                  ),
-                  'categories' => File.join(
-                    @config['dir']['template'],
-                    'categories.html.erb'
-                  ),
-                  'feed' => File.join(
-                    @config['dir']['template'],
-                    'feed.xml.erb'
-                  ),
-                  'post' => File.join(
-                    @config['dir']['template'],
-                    'post.html.erb'
-                  )
+                  'category' => full_template_dir('category.html.erb'),
+                  'categories' => full_template_dir('categories.html.erb'),
+                  'feed' => full_template_dir('feed.xml.erb'),
+                  'post' => full_template_dir('post.html.erb')
+    end
+
+    def initialize
+      @config = ParseConfig.new
+      ini_blog
+      ini_dir
+      ini_template
+    end
+
+    def load_config(config_file)
+      @config = ParseConfig.new(config_file)
     end
 
     def make_dest_dir(src, dest)
@@ -52,13 +56,7 @@ module GeraBlog
       FileUtils.cp_r(src, dest)
     end
 
-    def load_config(config_file)
-      @config = ParseConfig.new(config_file)
-    end
-
-    def save
-      @posts = render
-
+    def create_dirs
       testdir = @config['dir']['output']
       Dir.mkdir(testdir) unless Dir.exist?(testdir)
 
@@ -76,47 +74,49 @@ module GeraBlog
           File.join(category_dir, 'images')
         )
       end
+    end
+
+    def write_parsed(file, parser, category, title, posts)
+      blog = {
+        name: @config['blog']['name'],
+        language: @config['blog']['language'],
+        url: title[:url],
+        description: title[:description]
+      }
+
+      File.write(
+        File.join(@config['dir']['output'], category, file),
+        parser.result(title: title, posts: posts, blog: blog)
+      )
+    end
+
+    def save
+      @posts = render
+
+      create_dirs
 
       @posts.map { |post| File.write(post[:filename], post[:content]) }
 
       parser_rss = Erubis::Eruby.new File.read(@config['template']['feed'])
       parser_html = Erubis::Eruby.new File.read(@config['template']['category'])
 
-      blog = {
-        name: @config['blog']['name'],
-        language: @config['blog']['language'],
-        url: @config['blog']['url'],
-        description: @config['blog']['description']
-      }
-
       # General RSS
       File.write(
         File.join(@config['dir']['output'], 'feed.xml'),
-        parser_rss.result(blog: blog, posts: @posts)
+        parser_rss.result(blog: @config['blog'], posts: @posts)
       )
 
       # Page & RSS, by category
       @posts.map { |p| p[:category] }.uniq.each do |category|
-        blog[:url] = File.join @config['blog']['url'], 'texts', category
-        blog[:description] = "#{@config['blog']['description']} (#{category})"
+        title = {
+          url: File.join(@config['blog']['url'], 'texts', category),
+          description: "#{@config['blog']['description']} (#{category})"
+        }
 
         category_posts = @posts.select { |p| p[:category] == category }
 
-        File.write(
-          File.join(@config['dir']['output'], category, 'feed.xml'),
-          parser_rss.result(
-            blog: blog,
-            posts: category_posts
-          )
-        )
-
-        File.write(
-          File.join(@config['dir']['output'], category, 'index.html'),
-          parser_html.result(
-            blog: blog,
-            posts: category_posts
-          )
-        )
+        write_parsed('feed.xml', parser_rss, category, title, category_posts)
+        write_parsed('index.html', parser_html, category, title, category_posts)
       end
     end
 
@@ -128,21 +128,17 @@ module GeraBlog
 
       posts = []
       categories_dir.each do |category, dir|
+        md_render = GeraBlog::Markdown.new(category, @config)
+
         Dir["#{dir}/*.md"].sort.reverse.each do |file|
-          posts.push(
-            render_post(
-              filename: file,
-              category: category,
-              categories: categories
-            )
-          )
+          posts.push render_post(md_render, file, category, categories)
         end
       end
 
       posts
     end
 
-    def render_post(filename:, category:, categories:)
+    def render_post(md_render, filename, category, categories)
       md_content = File.read(filename)
       lines = md_content.split("\n")
       newfile = File.basename(filename).sub(/md$/, 'html')
@@ -152,14 +148,10 @@ module GeraBlog
         category: category,
         description: lines[2][3..-1],
         date: Date.parse(newfile.match('\A(....-..-..)')[1]).rfc822,
-        content: md_content,
         filename: File.join(@config['dir']['output'], category, newfile),
         url: File.join(@config['blog']['url'], 'texts', category, newfile)
       }
-      post[:content] = GeraBlog::Markdown.new(
-        lang: category,
-        blog: @config
-      ).to_html(post: post, categories: categories)
+      post[:content] = md_render.to_html(post, md_content, categories)
 
       post
     end
