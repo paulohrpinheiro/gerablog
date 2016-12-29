@@ -50,7 +50,6 @@ gb.load_config options[:config] unless options[:config].nil?
 
 if options[:generate]
   gb.render!
-  gb.save
   puts gb.posts.map { |p| p[:category] }.uniq
 elsif options[:new]
   [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir, gb.assets_dir].each do |dir|

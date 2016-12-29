@@ -57,7 +57,9 @@ module GeraBlog
       }
     end
 
-    def save
+    def render!
+      @posts = render
+
       Dir.mkdir(@output_dir) unless Dir.exist?(@output_dir)
 
       assets_src = File.join __dir__, '..', '..', 'assets'
@@ -78,19 +80,32 @@ module GeraBlog
       end
 
       @posts.map { |post| File.write(post[:filename], post[:content]) }
-    end
-
-    def render!
-      @posts = render
-
-      rss_all = []
-      rss_category = []
 
       parser = Erubis::Eruby.new File.read(@template[:feed])
+      blog = {
+        name: @name,
+        language: @language,
+        url: @url,
+        description: @description
+      }
+
       File.write(
-        File.join(@output_dir, 'feed.rss'),
-        parser.result(blog: self, posts: @posts)
+        File.join(@output_dir, 'feed.xml'),
+        parser.result(blog: blog, posts: @posts)
       )
+
+      @posts.map { |p| p[:category] }.uniq.each do |category|
+        blog[:url] = File.join @url, 'texts', category
+        blog[:description] = "#{@description} (#{category.capitalize})"
+
+        File.write(
+          File.join(@output_dir, category, 'feed.xml'),
+          parser.result(
+            blog: blog,
+            posts: @posts.select { |p| p[:category] == category }
+          )
+        )
+      end
     end
 
     def render
@@ -127,8 +142,19 @@ module GeraBlog
         url: File.join(self.url, 'texts', category, newfile)
       }
 
+      blog = {
+        title: @title,
+        name: @name,
+        url: @url,
+        description: @description,
+        language: @language,
+        categories: @categories,
+        feeds: '',
+        template: @template
+      }
+
       post[:content] = GeraBlog::Render
-        .new(lang: category, blog: self)
+        .new(lang: category, blog: blog)
         .to_html(post: post)
 
       post

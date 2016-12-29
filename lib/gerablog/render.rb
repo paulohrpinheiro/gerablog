@@ -30,13 +30,8 @@ module GeraBlog
   # My Render class
   class Render
     def initialize(lang:, blog:)
-      @template = blog.template
-      @blog = {
-        name: blog.name,
-        title: blog.title,
-        description: blog.description,
-        categories: blog.categories
-      }
+      @template = blog[:template]
+      @blog = blog
       @render = Redcarpet::Markdown.new(CustomRender.new(lang: lang))
     end
 

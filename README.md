@@ -100,8 +100,8 @@ More some days.
 
 ## TODO
 
-- [ ] General RSS Feed
-- [ ] By topic RSS feed
+- [x] General RSS Feed
+- [x] By topic RSS feed
 - [ ] Tests!!!!!
 - [x] create project in command line
 - [x] more complete command line options
