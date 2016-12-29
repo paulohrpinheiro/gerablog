@@ -29,6 +29,7 @@ module GeraBlog
       @template_dir = File.join(@root_dir, 'templates')
       @assets_dir = File.join(@root_dir, 'assets')
       @template = {
+        category: File.join(@template_dir, 'category.html.erb'),
         categories: File.join(@template_dir, 'categories.html.erb'),
         feed: File.join(@template_dir, 'feed.xml.erb'),
         post: File.join(@template_dir, 'post.html.erb')
@@ -51,6 +52,7 @@ module GeraBlog
       @assets_dir = config['dir']['assets']
 
       @template = {
+        category: config['template']['category'],
         categories: config['template']['categories'],
         feed: config['template']['feed'],
         post: config['template']['post']
@@ -81,7 +83,9 @@ module GeraBlog
 
       @posts.map { |post| File.write(post[:filename], post[:content]) }
 
-      parser = Erubis::Eruby.new File.read(@template[:feed])
+      parser_rss = Erubis::Eruby.new File.read(@template[:feed])
+      parser_html = Erubis::Eruby.new File.read(@template[:category])
+
       blog = {
         name: @name,
         language: @language,
@@ -89,22 +93,35 @@ module GeraBlog
         description: @description
       }
 
+      # General RSS
       File.write(
         File.join(@output_dir, 'feed.xml'),
-        parser.result(blog: blog, posts: @posts)
+        parser_rss.result(blog: blog, posts: @posts)
       )
 
+      # Page & RSS, by category
       @posts.map { |p| p[:category] }.uniq.each do |category|
         blog[:url] = File.join @url, 'texts', category
         blog[:description] = "#{@description} (#{category.capitalize})"
 
+        category_posts = @posts.select { |p| p[:category] == category }
+
         File.write(
           File.join(@output_dir, category, 'feed.xml'),
-          parser.result(
+          parser_rss.result(
             blog: blog,
-            posts: @posts.select { |p| p[:category] == category }
+            posts: category_posts
           )
         )
+
+        File.write(
+          File.join(@output_dir, category, 'index.html'),
+          parser_html.result(
+            blog: blog,
+            posts: category_posts
+          )
+        )
+
       end
     end
 
