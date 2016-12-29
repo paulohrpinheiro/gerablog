@@ -138,13 +138,13 @@ module GeraBlog
         Dir["#{dir}/*.md"]
           .sort
           .reverse
-          .map { |f| posts.push render_page(filename: f, category: category) }
+          .map { |f| posts.push render_post(filename: f, category: category) }
       end
 
       posts
     end
 
-    def render_page(filename:, category:)
+    def render_post(filename:, category:)
       md_content = File.read(filename)
       lines = md_content.split("\n")
       newfile = File.basename(filename).sub(%r{md$}, 'html')
