@@ -28,7 +28,7 @@ module GeraBlog
   end
 
   # My Render class
-  class Render
+  class Markdown
     def initialize(lang:, blog:)
       @template = blog[:template]
       @blog = blog

@@ -170,7 +170,7 @@ module GeraBlog
         template: @template
       }
 
-      post[:content] = GeraBlog::Render
+      post[:content] = GeraBlog::Markdown
         .new(lang: category, blog: blog)
         .to_html(post: post)
 
