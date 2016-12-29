@@ -12,33 +12,44 @@ module GeraBlog
     def initialize
       @config = ParseConfig.new
 
-      @config.add 'blog', {
-        'root' => '.',
-        'url' => 'http://localhost:8080',
-        'title' => 'GeraBlog',
-        'name' => 'GeraBlog Static Blog Generator',
-        'description' => 'Blog Generator - my own static site generator',
-        'language' => 'pt-br'
-      }
+      @config.add 'blog',
+                  'root' => '.',
+                  'url' => 'http://localhost:8080',
+                  'title' => 'GeraBlog',
+                  'name' => 'GeraBlog Static Blog Generator',
+                  'description' => 'GeraBlog - My own static site generator',
+                  'language' => 'pt-br'
 
       root = './'
-      @config.add 'dir', {
-        'root' => root,
-        'texts' => File.join(root, 'texts'),
-        'assets' => File.join(root, 'assets'),
-        'output' => File.join(root, 'output'),
-        'template' => File.join(root, 'templates')
-      }
+      @config.add 'dir',
+                  'root' => root,
+                  'texts' => File.join(root, 'texts'),
+                  'assets' => File.join(root, 'assets'),
+                  'output' => File.join(root, 'output'),
+                  'template' => File.join(root, 'templates')
 
-      @config.add 'template', {
-        'category' => File.join(@config['dir']['template'], 'category.html.erb'),
-        'categories' => File.join(
-          @config['dir']['template'],
-          'categories.html.erb'
-        ),
-        'feed' => File.join(@config['dir']['template'], 'feed.xml.erb'),
-        'post' => File.join(@config['dir']['template'], 'post.html.erb')
-      }
+      @config.add 'template',
+                  'category' => File.join(
+                    @config['dir']['template'],
+                    'category.html.erb'
+                  ),
+                  'categories' => File.join(
+                    @config['dir']['template'],
+                    'categories.html.erb'
+                  ),
+                  'feed' => File.join(
+                    @config['dir']['template'],
+                    'feed.xml.erb'
+                  ),
+                  'post' => File.join(
+                    @config['dir']['template'],
+                    'post.html.erb'
+                  )
+    end
+
+    def make_dest_dir(src, dest)
+      return if Dir.exist?(dest)
+      FileUtils.cp_r(src, dest)
     end
 
     def load_config(config_file)
@@ -51,21 +62,19 @@ module GeraBlog
       testdir = @config['dir']['output']
       Dir.mkdir(testdir) unless Dir.exist?(testdir)
 
-      assets_src = File.join __dir__, '..', '..', 'assets'
-      FileUtils.cp_r(
-        assets_src,
+      make_dest_dir(
+        @config['dir']['assets'],
         File.join(@config['dir']['output'], 'assets')
-      ) if Dir.exist?(assets_src)
+      )
 
       @posts.map { |p| p[:category] }.uniq.each do |category|
         category_dir = File.join(@config['dir']['output'], category)
         Dir.mkdir(category_dir) unless Dir.exist?(category_dir)
 
-        image_src = File.join @config['dir']['root'], 'texts', category, 'images'
-        FileUtils.cp_r(
-          image_src,
+        make_dest_dir(
+          File.join(@config['dir']['texts'], category, 'images'),
           File.join(category_dir, 'images')
-        ) if Dir.exist?(image_src)
+        )
       end
 
       @posts.map { |post| File.write(post[:filename], post[:content]) }
@@ -89,7 +98,7 @@ module GeraBlog
       # Page & RSS, by category
       @posts.map { |p| p[:category] }.uniq.each do |category|
         blog[:url] = File.join @config['blog']['url'], 'texts', category
-        blog[:description] = "#{@config['blog']['description']} (#{category.capitalize})"
+        blog[:description] = "#{@config['blog']['description']} (#{category})"
 
         category_posts = @posts.select { |p| p[:category] == category }
 
@@ -108,20 +117,17 @@ module GeraBlog
             posts: category_posts
           )
         )
-
       end
     end
 
     def render
       c_dir = Dir[File.join(@config['dir']['texts'], '*')]
       categories_dir = Hash[c_dir.map { |d| File.basename d }.zip c_dir]
-      @categories =
-        %(<nav id="mainnav">\n<ul>\n) +
-        categories_dir.keys.map { |c| %(<li><a href="../texts/#{c}">#{c.capitalize}</a></li>) }.join("\n") +
-        %(</ul>\n</nav>\n)
+      parser = Erubis::Eruby.new File.read(@config['template']['categories'])
+      @categories = parser.result(categories: categories_dir)
 
       posts = []
-      categories_dir.each do |category,dir|
+      categories_dir.each do |category, dir|
         Dir["#{dir}/*.md"]
           .sort
           .reverse
@@ -134,7 +140,7 @@ module GeraBlog
     def render_post(filename:, category:)
       md_content = File.read(filename)
       lines = md_content.split("\n")
-      newfile = File.basename(filename).sub(%r{md$}, 'html')
+      newfile = File.basename(filename).sub(/md$/, 'html')
 
       post = {
         title: lines[0][2..-1],
@@ -146,20 +152,8 @@ module GeraBlog
         url: File.join(@config['blog']['url'], 'texts', category, newfile)
       }
 
-      blog = {
-        title: @config['blog']['title'],
-        name: @config['blog']['name'],
-        url: @config['blog']['url'],
-        description: @config['blog']['description'],
-        language: @config['blog']['language'],
-        categories: @categories,
-        feeds: '',
-        template: @config['template']
-      }
-
-      post[:content] = GeraBlog::Markdown
-        .new(lang: category, blog: blog)
-        .to_html(post: post)
+      post[:content] = GeraBlog::Markdown.new(lang: category, blog: @config)
+                                           .to_html(post: post)
 
       post
     end

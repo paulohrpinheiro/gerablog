@@ -30,7 +30,7 @@ module GeraBlog
   # My Render class
   class Markdown
     def initialize(lang:, blog:)
-      @template = blog[:template]
+      @template = blog['template']
       @blog = blog
       @render = Redcarpet::Markdown.new(CustomRender.new(lang: lang))
     end
@@ -38,6 +38,7 @@ module GeraBlog
     def to_html(post:)
       parser = Erubis::Eruby.new File.read(@template['post'])
       post[:converted] = @render.render(post[:content])
+      puts post[:converted]
       parser.result(blog: @blog, post: post)
     end
   end

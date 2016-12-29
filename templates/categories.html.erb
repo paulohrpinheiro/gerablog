@@ -1,7 +1,7 @@
 <nav id="mainnav">
   <ul>
-<% for @category in @categories -%>
-    <li><a href="<%= @category[:link] %>"><%= @category[:name] %></a></li>
+<% for category in categories.keys -%>
+    <li><a href="<%= category %>"><%= categories[category] %></a></li>
 <% end -%>
   </ul>
 </nav>

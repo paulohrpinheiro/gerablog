@@ -21,23 +21,21 @@ optparse = OptionParser.new do |opts|
     options[:config] = value
   end
 
-  default_root = GeraBlog::Blog.new().config['dir'][:root]
+  default_root = GeraBlog::Blog.new.config['dir'][:root]
   options[:root] = default_root
   opts.on(
-    '-r',
-    "--root FILENAME (default '#{default_root}')",
-    'Root dir for project'
+    '-r', "--root FILENAME (default '#{default_root}')", "Project's root dir"
   ) do |value|
     options[:root] = value
   end
 
   options[:new] = false
-  opts.on('-n','--new', 'Create a new project.') do
+  opts.on('-n', '--new', 'Create a new project.') do
     options[:new] = true
   end
 
   options[:generate] = false
-  opts.on('-g','--generate', 'Generate the static blog.') do |value|
+  opts.on('-g', '--generate', 'Generate the static blog.') do |value|
     options[:generate] = value
   end
 end
@@ -52,7 +50,7 @@ if options[:generate]
   gb.save
   puts gb.posts.map { |p| p[:category] }.uniq
 elsif options[:new]
-  [gb.root_dir, gb.output_dir, gb.texts_dir, gb.template_dir, gb.assets_dir].each do |dir|
+  gb.config['dir'].each do |dir|
     Dir.mkdir(dir) unless Dir.exist?(dir)
   end
 
@@ -65,12 +63,12 @@ elsif options[:new]
   FileUtils.cp_r(
     File.join(__dir__, '..', 'templates'),
     gb.template_dir,
-    remove_destination:true
+    remove_destination: true
   )
 
   config = gb.config.new
   file = File.open(File.join(gb.config['dir']['root'], 'gerablog.conf'), 'w')
   config.write(file)
 else
-  puts optparse.parse! %w[--help]
+  puts optparse.parse! %w([--help])
 end
