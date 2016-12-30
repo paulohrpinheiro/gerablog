@@ -1,7 +1,16 @@
 require 'date'
 require_relative 'render'
 
+# GeraBlog - a Static Blog Generator
 module GeraBlog
+  def self.make_dest_dir(src, dest, remove: false)
+    FileUtils.cp_r(src, dest, remove_destination: remove)
+  end
+
+  def self.create_dir(dir)
+    FileUtils.mkdir_p(dir) unless Dir.exist?(dir)
+  end
+
   # Blog
   class Blog
     attr_reader :config
@@ -39,7 +48,7 @@ module GeraBlog
                   'post' => full_template_dir('post.html.erb')
     end
 
-    def initialize(root='./')
+    def initialize(root = './')
       @config = ParseConfig.new
       ini_blog
       ini_dir root
@@ -50,31 +59,26 @@ module GeraBlog
       @config = ParseConfig.new(config_file)
     end
 
-    def make_dest_dir(src, dest)
-      return if Dir.exist?(dest)
-      FileUtils.cp_r(src, dest)
-    end
-
-    def create_dir(dir)
-      Dir.mkdir(dir) unless Dir.exist?(dir)
-    end
-
     def create_category_dir(category)
-      category_dir = File.join(@config['dir']['output'], category)
-      create_dir category_dir
+      puts category
+      category_dir = File.join config['dir']['output'], 'texts', category
 
-      make_dest_dir(
+      GeraBlog.create_dir category_dir
+
+      GeraBlog.make_dest_dir(
         File.join(@config['dir']['texts'], category, 'images'),
-        File.join(category_dir, 'images')
+        category_dir,
+        remove: true
       )
     end
 
     def create_dirs(posts)
-      create_dir @config['dir']['output']
+      GeraBlog.create_dir  File.join(@config['dir']['output'], 'texts')
 
-      make_dest_dir(
+      GeraBlog.make_dest_dir(
         @config['dir']['assets'],
-        File.join(@config['dir']['output'], 'assets')
+        @config['dir']['output'],
+        remove: true
       )
 
       posts.map { |p| p[:category] }
@@ -91,7 +95,7 @@ module GeraBlog
       }
 
       File.write(
-        File.join(@config['dir']['output'], category, file),
+        File.join(@config['dir']['output'], 'texts', category, file),
         parser.result(title: title, posts: posts, blog: blog)
       )
     end

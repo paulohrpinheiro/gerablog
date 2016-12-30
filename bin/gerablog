@@ -52,17 +52,16 @@ if options[:generate]
 elsif options[:new]
   puts gb.config['dir'].values
   gb.config['dir'].values.map { |dir| Dir.mkdir(dir) unless Dir.exist?(dir) }
-
-  FileUtils.cp_r(
+  GeraBlog.make_dest_dir(
     File.join(__dir__, '..', 'assets'),
     gb.config['dir']['assets'],
-    remove_destination: true
+    remove: true
   )
 
-  FileUtils.cp_r(
+  GeraBlog.make_dest_dir(
     File.join(__dir__, '..', 'templates'),
     gb.config['dir']['template'],
-    remove_destination: true
+    remove: true
   )
 
   puts gb.config['dir']['root']

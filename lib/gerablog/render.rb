@@ -31,7 +31,7 @@ module GeraBlog
     end
 
     def make_full_filename(filename, category)
-      File.join(@config['dir']['output'], category, filename)
+      File.join(@config['dir']['output'], 'texts', category, filename)
     end
 
     def make_full_url(filename, category)
