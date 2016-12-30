@@ -96,19 +96,21 @@ module GeraBlog
 
       File.write(
         File.join(@config['dir']['output'], 'texts', category, file),
-        parser.result(title: title, posts: posts, blog: blog)
+        parser.result(title: title, posts: posts, blog: blog),
+        mode: 'w'
       )
     end
 
     def write_posts(posts)
       create_dirs posts
-      posts.map { |post| File.write(post[:filename], post[:content]) }
+      posts.map { |post| File.write(post[:filename], post[:content], mode: 'w') }
     end
 
     def write_general_rss(posts, parser_rss)
       File.write(
         File.join(@config['dir']['output'], 'feed.xml'),
-        parser_rss.result(blog: @config['blog'], posts: posts)
+        parser_rss.result(blog: @config['blog'], posts: posts),
+        mode: 'w'
       )
     end
 

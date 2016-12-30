@@ -9,9 +9,10 @@ module GeraBlog
 
     def render
       c_dir = Dir[File.join(@config['dir']['texts'], '*')]
-      categories_dir = Hash[c_dir.map { |d| File.basename d }.zip c_dir]
+      c_names = c_dir.map { |d| File.basename d }
+      categories_dir = Hash[c_names.zip c_dir]
       parser = Erubis::Eruby.new File.read(@config['template']['categories'])
-      categories = parser.result(categories: categories_dir)
+      categories = parser.result(categories: c_names, blog: @config['blog'])
 
       rendered_posts(categories_dir, categories)
     end
