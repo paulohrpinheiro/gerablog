@@ -4,7 +4,7 @@ require_relative 'render'
 module GeraBlog
   # Blog
   class Blog
-    attr_reader :config, :posts
+    attr_reader :config
 
     @posts = []
 
@@ -56,24 +56,31 @@ module GeraBlog
       FileUtils.cp_r(src, dest)
     end
 
-    def create_dirs
-      testdir = @config['dir']['output']
-      Dir.mkdir(testdir) unless Dir.exist?(testdir)
+    def create_dir(dir)
+      Dir.mkdir(dir) unless Dir.exist?(dir)
+    end
+
+    def create_category_dir(category)
+      category_dir = File.join(@config['dir']['output'], category)
+      create_dir category_dir
+
+      make_dest_dir(
+        File.join(@config['dir']['texts'], category, 'images'),
+        File.join(category_dir, 'images')
+      )
+    end
+
+    def create_dirs(posts)
+      create_dir @config['dir']['output']
 
       make_dest_dir(
         @config['dir']['assets'],
         File.join(@config['dir']['output'], 'assets')
       )
 
-      @posts.map { |p| p[:category] }.uniq.each do |category|
-        category_dir = File.join(@config['dir']['output'], category)
-        Dir.mkdir(category_dir) unless Dir.exist?(category_dir)
-
-        make_dest_dir(
-          File.join(@config['dir']['texts'], category, 'images'),
-          File.join(category_dir, 'images')
-        )
-      end
+      posts.map { |p| p[:category] }
+           .uniq
+           .map { |category| create_category_dir category }
     end
 
     def write_parsed(file, parser, category, title, posts)
@@ -90,30 +97,26 @@ module GeraBlog
       )
     end
 
-    def save
-      @posts = render
+    def write_posts(posts)
+      create_dirs posts
+      posts.map { |post| File.write(post[:filename], post[:content]) }
+    end
 
-      create_dirs
-
-      @posts.map { |post| File.write(post[:filename], post[:content]) }
-
-      parser_rss = Erubis::Eruby.new File.read(@config['template']['feed'])
-      parser_html = Erubis::Eruby.new File.read(@config['template']['category'])
-
-      # General RSS
+    def write_general_rss(posts, parser_rss)
       File.write(
         File.join(@config['dir']['output'], 'feed.xml'),
-        parser_rss.result(blog: @config['blog'], posts: @posts)
+        parser_rss.result(blog: @config['blog'], posts: posts)
       )
+    end
 
-      # Page & RSS, by category
-      @posts.map { |p| p[:category] }.uniq.each do |category|
+    def write_by_category_files(posts, parser_rss, parser_html)
+      posts.map { |p| p[:category] }.uniq.each do |category|
         title = {
           url: File.join(@config['blog']['url'], 'texts', category),
           description: "#{@config['blog']['description']} (#{category})"
         }
 
-        category_posts = @posts.select { |p| p[:category] == category }
+        category_posts = posts.select { |p| p[:category] == category }
 
         write_parsed('feed.xml', parser_rss, category, title, category_posts)
         write_parsed('index.html', parser_html, category, title, category_posts)
@@ -121,39 +124,18 @@ module GeraBlog
     end
 
     def render
-      c_dir = Dir[File.join(@config['dir']['texts'], '*')]
-      categories_dir = Hash[c_dir.map { |d| File.basename d }.zip c_dir]
-      parser = Erubis::Eruby.new File.read(@config['template']['categories'])
-      categories = parser.result(categories: categories_dir)
-
-      posts = []
-      categories_dir.each do |category, dir|
-        md_render = GeraBlog::Markdown.new(category, @config)
-
-        Dir["#{dir}/*.md"].sort.reverse.each do |file|
-          posts.push render_post(md_render, file, category, categories)
-        end
-      end
-
-      posts
+      GeraBlog::Render.new(@config).render
     end
 
-    def render_post(md_render, filename, category, categories)
-      md_content = File.read(filename)
-      lines = md_content.split("\n")
-      newfile = File.basename(filename).sub(/md$/, 'html')
+    def save
+      posts = render
 
-      post = {
-        title: lines[0][2..-1],
-        category: category,
-        description: lines[2][3..-1],
-        date: Date.parse(newfile.match('\A(....-..-..)')[1]).rfc822,
-        filename: File.join(@config['dir']['output'], category, newfile),
-        url: File.join(@config['blog']['url'], 'texts', category, newfile)
-      }
-      post[:content] = md_render.to_html(post, md_content, categories)
+      parser_rss = Erubis::Eruby.new File.read(@config['template']['feed'])
+      parser_html = Erubis::Eruby.new File.read(@config['template']['category'])
 
-      post
+      write_posts posts
+      write_general_rss posts, parser_rss
+      write_by_category_files posts, parser_rss, parser_html
     end
   end
 end

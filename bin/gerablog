@@ -48,7 +48,6 @@ gb.load_config options[:config] unless options[:config].nil?
 if options[:generate]
   gb.render
   gb.save
-  puts gb.posts.map { |p| p[:category] }.uniq
 elsif options[:new]
   gb.config['dir'].each do |dir|
     Dir.mkdir(dir) unless Dir.exist?(dir)
