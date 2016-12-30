@@ -43,18 +43,15 @@ end
 optparse.parse!
 
 gb = GeraBlog::Blog.new
-gb = GeraBlog::Blog.new(options[:root]) if options[:root].nil?
+gb = GeraBlog::Blog.new(options[:root]) unless options[:root].nil?
 gb.load_config options[:config] unless options[:config].nil?
 
 if options[:generate]
   gb.render
   gb.save
 elsif options[:new]
-  gb.config['dir'].values do |dir|
-    puts '*'*80
-    puts dir
-    Dir.mkdir(dir) unless Dir.exist?(dir)
-  end
+  puts gb.config['dir'].values
+  gb.config['dir'].values.map { |dir| Dir.mkdir(dir) unless Dir.exist?(dir) }
 
   FileUtils.cp_r(
     File.join(__dir__, '..', 'assets'),
