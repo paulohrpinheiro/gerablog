@@ -18,8 +18,7 @@ module GeraBlog
                   'language' => 'pt-br'
     end
 
-    def ini_dir
-      root = './'
+    def ini_dir(root)
       @config.add 'dir',
                   'root' => root,
                   'texts' => File.join(root, 'texts'),
@@ -40,10 +39,10 @@ module GeraBlog
                   'post' => full_template_dir('post.html.erb')
     end
 
-    def initialize
+    def initialize(root='./')
       @config = ParseConfig.new
       ini_blog
-      ini_dir
+      ini_dir root
       ini_template
     end
 

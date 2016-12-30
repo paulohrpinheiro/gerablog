@@ -21,7 +21,7 @@ optparse = OptionParser.new do |opts|
     options[:config] = value
   end
 
-  default_root = GeraBlog::Blog.new.config['dir'][:root]
+  default_root = GeraBlog::Blog.new.config['dir']['root']
   options[:root] = default_root
   opts.on(
     '-r', "--root FILENAME (default '#{default_root}')", "Project's root dir"
@@ -43,31 +43,34 @@ end
 optparse.parse!
 
 gb = GeraBlog::Blog.new
+gb = GeraBlog::Blog.new(options[:root]) if options[:root].nil?
 gb.load_config options[:config] unless options[:config].nil?
 
 if options[:generate]
   gb.render
   gb.save
 elsif options[:new]
-  gb.config['dir'].each do |dir|
+  gb.config['dir'].values do |dir|
+    puts '*'*80
+    puts dir
     Dir.mkdir(dir) unless Dir.exist?(dir)
   end
 
   FileUtils.cp_r(
     File.join(__dir__, '..', 'assets'),
-    gb.assets_dir,
+    gb.config['dir']['assets'],
     remove_destination: true
   )
 
   FileUtils.cp_r(
     File.join(__dir__, '..', 'templates'),
-    gb.template_dir,
+    gb.config['dir']['template'],
     remove_destination: true
   )
 
-  config = gb.config.new
+  puts gb.config['dir']['root']
   file = File.open(File.join(gb.config['dir']['root'], 'gerablog.conf'), 'w')
-  config.write(file)
+  gb.config.write(file)
 else
   puts optparse.parse! %w(--help)
 end
