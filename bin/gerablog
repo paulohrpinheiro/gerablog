@@ -69,5 +69,5 @@ elsif options[:new]
   file = File.open(File.join(gb.config['dir']['root'], 'gerablog.conf'), 'w')
   config.write(file)
 else
-  puts optparse.parse! %w([--help])
+  puts optparse.parse! %w(--help)
 end
