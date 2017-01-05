@@ -73,7 +73,7 @@ module GeraBlog
     end
 
     def create_dirs(posts)
-      GeraBlog.create_dir  File.join(@config['dir']['output'], 'texts')
+      GeraBlog.create_dir File.join(@config['dir']['output'], 'texts')
 
       GeraBlog.make_dest_dir(
         @config['dir']['assets'],
@@ -96,21 +96,22 @@ module GeraBlog
 
       File.write(
         File.join(@config['dir']['output'], 'texts', category, file),
-        parser.result(title: title, posts: posts, blog: blog),
-        mode: 'w'
+        parser.result(title: title, posts: posts, blog: blog)
       )
     end
 
     def write_posts(posts)
       create_dirs posts
-      posts.map { |post| File.write(post[:filename], post[:content], mode: 'w') }
+
+      posts.each do |post|
+        File.write(post[:filename], post[:content])
+      end
     end
 
     def write_general_rss(posts, parser_rss)
       File.write(
         File.join(@config['dir']['output'], 'feed.xml'),
-        parser_rss.result(blog: @config['blog'], posts: posts),
-        mode: 'w'
+        parser_rss.result(blog: @config['blog'], posts: posts)
       )
     end
 
