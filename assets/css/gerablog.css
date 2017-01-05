@@ -58,3 +58,11 @@ p.textcal {
   color: black;
   margin-top: 0;
 }
+
+img {
+  vertical-align: top;
+  width: auto;
+  height: auto;
+  max-width:300px;
+  max-height:300px;
+}
