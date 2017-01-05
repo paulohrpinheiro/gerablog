@@ -3,8 +3,12 @@ require_relative 'redcarpet'
 module GeraBlog
   # Get all markdown files and return posts in html
   class Render
+    attr_reader :footer
+
     def initialize(config)
       @config = config
+      @footer = Erubis::Eruby.new(File.read(@config['template']['footer']))
+                             .result(blog: @config['blog'])
     end
 
     def render
@@ -21,7 +25,7 @@ module GeraBlog
       posts = []
 
       categories_dir.each do |category, dir|
-        md_render = GeraBlog::RedcarpetDriver.new(category, @config)
+        md_render = GeraBlog::RedcarpetDriver.new(category, @config, @footer)
 
         Dir["#{dir}/*.md"].sort.reverse.each do |file|
           posts.push render_post(md_render, file, category, categories)
@@ -62,7 +66,12 @@ module GeraBlog
 
     def render_post(md_render, filename, category, categories)
       post = file_to_post(filename, category)
-      post[:content] = md_render.to_html(post, post[:markdown], categories)
+      post[:content] = md_render.to_html(
+        post,
+        post[:markdown],
+        categories,
+        @footer
+      )
 
       post
     end

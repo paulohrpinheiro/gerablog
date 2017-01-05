@@ -45,7 +45,8 @@ module GeraBlog
                   'category' => full_template_dir('category.html.erb'),
                   'categories' => full_template_dir('categories.html.erb'),
                   'feed' => full_template_dir('feed.xml.erb'),
-                  'post' => full_template_dir('post.html.erb')
+                  'post' => full_template_dir('post.html.erb'),
+                  'footer' => full_template_dir('footer.html.erb')
     end
 
     def initialize(root = './')
@@ -91,12 +92,12 @@ module GeraBlog
         name: @config['blog']['name'],
         language: @config['blog']['language'],
         url: title[:url],
-        description: title[:description]
+        description: title[:description],
       }
 
       File.write(
         File.join(@config['dir']['output'], 'texts', category, file),
-        parser.result(title: title, posts: posts, blog: blog)
+        parser.result(title: title, posts: posts, blog: blog, footer: @footer)
       )
     end
 
@@ -134,7 +135,9 @@ module GeraBlog
     end
 
     def save
-      posts = render
+      render = GeraBlog::Render.new @config
+      posts = render.render
+      @footer = render.footer
 
       parser_rss = Erubis::Eruby.new File.read(@config['template']['feed'])
       parser_html = Erubis::Eruby.new File.read(@config['template']['category'])

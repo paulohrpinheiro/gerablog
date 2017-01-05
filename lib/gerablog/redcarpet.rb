@@ -29,16 +29,23 @@ module GeraBlog
 
   # My Render class
   class RedcarpetDriver
-    def initialize(lang, blog)
+    def initialize(lang, blog, footer)
       @template = blog['template']
       @blog = blog
+      @footer = footer
       @render = Redcarpet::Markdown.new(RedcarpetCustom.new(lang: lang))
     end
 
-    def to_html(post, content, categories)
-      parser = Erubis::Eruby.new File.read(@template['post'])
+    def to_html(post, content, categories, footer)
+      parser_body = Erubis::Eruby.new File.read(@template['post'])
+      parser_footer = Erubis::Eruby.new File.read(@template['footer'])
       post[:converted] = @render.render(content)
-      parser.result(blog: @blog['blog'], post: post, categories: categories)
+      parser_body.result(
+        blog: @blog['blog'],
+        post: post,
+        categories: categories,
+        footer: footer
+      )
     end
   end
 end
