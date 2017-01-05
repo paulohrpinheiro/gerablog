@@ -11,14 +11,15 @@
   <link rel="alternate" type="application/rss+xml" title="RSS Feed for <%= blog[:title] %>" href="../feed.xml" />
   <link rel="alternate" type="application/rss+xml" title="RSS Feed for <%= blog[:title] %>" href="feed.xml" />
 
-  <link rel="stylesheet" href="../assets/css/gerablog.css">
+  <link rel="stylesheet" href="../../assets/css/gerablog.css">
 
 </head>
 
 <body>
   <header>
     <h1><a href="/"><%= blog[:name] %></a></h1>
-    <h2><%= blog[:description] %> <a href="feed.xml">RSS</a></h2>
+    <h2><%= blog[:description] %> </h2>
+    <p><a href="feed.xml">RSS Feed for this category</a></p>
       <%= blog[:categories] %>
   </header>
 
