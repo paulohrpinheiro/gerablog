@@ -24,7 +24,8 @@ module GeraBlog
                   'title' => 'GeraBlog',
                   'name' => 'GeraBlog Static Blog Generator',
                   'description' => 'GeraBlog - My own static site generator',
-                  'language' => 'pt-br'
+                  'language' => 'pt-br',
+                  'itens_in_rss' => 50
     end
 
     def ini_dir(root)
@@ -114,7 +115,9 @@ module GeraBlog
         File.join(@config['dir']['output'], 'feed.xml'),
         @parser.render(
           @config['template']['feed'],
-          config: @config, posts: @posts
+          config:
+            @config,
+            posts: @posts.take(Integer @config['blog']['itens_in_rss'])
         )
       )
     end
