@@ -15,13 +15,13 @@ Write in *Markdown*, publish in *HTML*.
 * The third line will be the description of text, with `##` mark. Will be in meta description of generated html.
 * The filename **MUST** begin with a date: `2016-12-31-this-is-a-post.md`.
 * The texts must be in a subdirectory of `texts`. Each subdirectory will be assigned a *category*.
-* Change the layout by changing the `templates/posts.html.erb` file, which uses [erubis](http://www.kuwata-lab.com/erubis/) as template system.
+* Change the layout by changing files in `templates` dir, which uses [Tenjin](http://www.kuwata-lab.com/tenjin/rbtenjin-users-guide.html) as template system.
 * `JS` and` CSS` files put in `assets/{css, js}`.
 * The images used in the posts should be placed in a `images` subdirectory, within the category directory:` texts/ruby/images/pinkpanter.jpg`. In the post, put the reference as `![Pink Panter](images/pinkpanter.jpg)`.
 * Images used in posts **MUST** be placed in the same level`CATEGORY/images`.
 * By default, *GeraBlog* uses [prism](http://prismjs.com/) to highlight the syntax of the codes. The language indicated will be the category in which the text is. For example, the file `ruby/2016-12-31-ruby-rocks.md` if it has some source code, it will be marked as *lang-ruby*.
 
-# Sample text:
+## Sample text:
 
     # This is the title
 
@@ -33,9 +33,13 @@ Write in *Markdown*, publish in *HTML*.
 
         puts 'Hello world!'
 
+## Install
+
+    gem install gerablog
+
 ## Using
 
-The binary `gerablog` has this options:
+The executable `gerablog` has this options:
 
 ### `-h` or `--help`
 
@@ -59,13 +63,24 @@ How the project looks like?
 
     ➤ tree /tmp/test
     /tmp/test
+    ├── assets
+    │   └── assets
+    │       ├── css
+    │       │   ├── gerablog.css
+    │       │   └── prism.css
+    │       └── js
+    │           └── prism.js
     ├── gerablog.conf
     ├── output
     ├── templates
     │   └── templates
-    │       ├── categories.html.erb
-    │       ├── feed.xml.erb
-    │       └── post.html.erb
+    │       ├── categories.rbhtml
+    │       ├── category.rbhtml
+    │       ├── feed.rbxml
+    │       ├── footer.rbhtml
+    │       ├── header.rbhtml
+    │       ├── index.rbhtml
+    │       └── post.rbhtml
     └── texts
 
 If `--root` is not informed, root will be `./`.
@@ -88,15 +103,13 @@ For my [blog](https://paulohrpinheiro.xyz):
 
 pre-alpha !
 
-I'm using a ancestral script of this project to generate https://paulohrpinheiro.xyz.
+## History
+
+This project started with a script I made to generate my site https://paulohrpinheiro.xyz.
 
 The script is in this gist:
 
 https://gist.github.com/paulohrpinheiro/20130e06355fc5bffe5865ce903dce63
-
-Wait the beautiful code come in :)
-
-More some days.
 
 ## TODO
 
