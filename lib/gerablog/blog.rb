@@ -120,12 +120,18 @@ module GeraBlog
     end
 
     def write_general_html
+      context = {
+        config: @config,
+        categories: @categories,
+        title: {
+          title: @config['blog']['title'],
+          description: @config['blog']['description']
+        }
+      }
+
       File.write(
         File.join(@config['dir']['output'], 'index.html'),
-        @parser.render(
-          @config['template']['index'],
-          config: @config, categories: @categories
-        )
+        @parser.render(@config['template']['index'], context)
       )
     end
 

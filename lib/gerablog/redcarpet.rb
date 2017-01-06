@@ -41,7 +41,11 @@ module GeraBlog
       context = {
         config: @config,
         post: post,
-        categories: categories
+        categories: categories,
+        title: {
+          title: post[:title],
+          description: post[:description]
+        }
       }
       parser = Tenjin::Engine.new context
       parser.render @template['post'], context

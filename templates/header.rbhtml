@@ -1,18 +1,28 @@
-<?rb #@ARGS config, post, categories ?>
+<?rb #@ARGS config, post, categories, title ?>
 <!DOCTYPE html>
 <html lang="${@config['blog']['language']}">
 
 <head>
-  <title>${@config['blog']['title']}</title>
+  <title>${@title[:title]}</title>
 
   <meta charset="utf-8"/>
-  <meta name="description" content="${@post[:description]}">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="${@title[:description]}">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  >
 
-  <link rel="alternate" type="application/rss+xml" title="RSS Feed for ${@config['blog']['title']}" href="../feed.xml" />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="RSS Feed for ${@config['blog']['title']}"
+    href="${@config['blog']['url']}/feed.xml"
+  >
 
-  <link rel="stylesheet" href="../../assets/css/gerablog.css">
-  <link rel="stylesheet" href="../../assets/css/prism.css">
+<?rb cssdir = File.join config['blog']['url'], 'assets', 'css' ?>
+
+  <link rel="stylesheet" href="${cssdir}/gerablog.css">
+  <link rel="stylesheet" href="${cssdir}/prism.css">
 
 </head>
 

@@ -3,6 +3,7 @@
 
 <footer>
   <p>Copyright &copy; 2016-2017, ${@config['blog']['name']}</p>
+  <p><a href="${@config['blog']['url']}/feed.xml">RSS Feed for this blog</a></p>
   <ul>
     <li>Static Blog Engine by
       <a href="https://github.com/paulohrpinheiro/gerablog">GeraBlog</a>
@@ -12,3 +13,8 @@
     </li>
   </ul>
 </footer>
+
+ <script src="${@config['blog']['url']}/assets/js/prism.js"></script>
+
+</body>
+</html>
