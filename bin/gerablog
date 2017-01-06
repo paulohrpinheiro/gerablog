@@ -2,9 +2,8 @@
 
 require 'optparse'
 require 'fileutils'
-require 'parseconfig'
 
-require_relative '../lib/gerablog'
+require 'gerablog'
 
 options = {}
 
@@ -21,11 +20,8 @@ optparse = OptionParser.new do |opts|
     options[:config] = value
   end
 
-  default_root = GeraBlog::Blog.new.config['dir']['root']
-  options[:root] = default_root
-  opts.on(
-    '-r', "--root FILENAME (default '#{default_root}')", "Project's root dir"
-  ) do |value|
+  options[:root] = './'
+  opts.on('-r', "--root FILENAME", "Project's root dir") do |value|
     options[:root] = value
   end
 
@@ -42,8 +38,7 @@ end
 
 optparse.parse!
 
-gb = GeraBlog::Blog.new
-gb = GeraBlog::Blog.new(options[:root]) unless options[:root].nil?
+gb = GeraBlog::Blog.new options[:root]
 gb.load_config options[:config] unless options[:config].nil?
 
 if options[:generate]

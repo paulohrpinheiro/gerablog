@@ -1,4 +1,6 @@
 require 'date'
+require 'parseconfig'
+
 require_relative 'render'
 
 # GeraBlog - a Static Blog Generator
@@ -25,7 +27,7 @@ module GeraBlog
                   'name' => 'GeraBlog Static Blog Generator',
                   'description' => 'GeraBlog - My own static site generator',
                   'language' => 'pt-br',
-                  'itens_in_rss' => 50
+                  'itens_in_rss' => '50'
     end
 
     def ini_dir(root)
@@ -53,6 +55,7 @@ module GeraBlog
     end
 
     def initialize(root = './')
+      puts root
       @config = ParseConfig.new
       ini_blog
       ini_dir root
