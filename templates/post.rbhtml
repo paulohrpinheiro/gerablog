@@ -1,0 +1,14 @@
+<?rb #@ARGS post, config ?>
+<?rb import config['template']['header'] ?>
+
+  <article>
+    #{@post[:converted]}
+  </article>
+
+<?rb import config['template']['footer'] ?>
+
+  <script src="../../assets/js/prism.js"></script>
+
+</body>
+
+</html>

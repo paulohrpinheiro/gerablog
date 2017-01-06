@@ -1,0 +1,32 @@
+<?rb #@ARGS config, categories ?>
+<!DOCTYPE html>
+<html lang="${@config['blog']['language']}">
+<head>
+  <title>${@config['blog']['title']}</title>
+
+  <meta charset="utf-8"/>
+  <meta name="description" content="${@config['blog']['description']}">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="alternate" type="application/rss+xml" title="RSS Feed for ${@config['blog']['title']}" href="feed.xml" />
+
+  <link rel="stylesheet" href="assets/css/gerablog.css">
+
+</head>
+<body>
+  <article>
+    <header>
+      <h1><a href="/">${@config['blog']['name']}</a></h1>
+      <h2>${@config['blog']['description']}</h2>
+      <p><a href="feed.xml">RSS Feed for this blog</a></p>
+        #{@categories}
+    </header>
+    <p>
+      This is <a href="https://github.com/paulohpinheiro/gerablog">Gerablog</a>
+    </p>
+  </article>
+
+<?rb import config['template']['footer'] ?>
+
+</body>
+</html>

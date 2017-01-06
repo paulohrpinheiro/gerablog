@@ -1,4 +1,4 @@
-require 'erubis'
+require 'tenjin'
 require 'redcarpet'
 
 module GeraBlog
@@ -29,23 +29,22 @@ module GeraBlog
 
   # My Render class
   class RedcarpetDriver
-    def initialize(lang, blog, footer)
-      @template = blog['template']
-      @blog = blog
-      @footer = footer
+    def initialize(lang, config)
+      @template = config['template']
+      @blog = config['blog']
+      @config = config
       @render = Redcarpet::Markdown.new(RedcarpetCustom.new(lang: lang))
     end
 
-    def to_html(post, content, categories, footer)
-      parser_body = Erubis::Eruby.new File.read(@template['post'])
-      parser_footer = Erubis::Eruby.new File.read(@template['footer'])
+    def to_html(post, content, categories)
       post[:converted] = @render.render(content)
-      parser_body.result(
-        blog: @blog['blog'],
+      context = {
+        config: @config,
         post: post,
-        categories: categories,
-        footer: footer
-      )
+        categories: categories
+      }
+      parser = Tenjin::Engine.new context
+      parser.render @template['post'], context
     end
   end
 end

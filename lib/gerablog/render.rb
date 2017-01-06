@@ -7,25 +7,24 @@ module GeraBlog
 
     def initialize(config)
       @config = config
-      @footer = Erubis::Eruby.new(File.read(@config['template']['footer']))
-                             .result(blog: @config['blog'])
     end
 
     def render
       c_dir = Dir[File.join(@config['dir']['texts'], '*')]
       c_names = c_dir.map { |d| File.basename d }
       categories_dir = Hash[c_names.zip c_dir]
-      parser = Erubis::Eruby.new File.read(@config['template']['categories'])
-      categories = parser.result(categories: c_names, blog: @config['blog'])
+      parser = Tenjin::Engine.new
+      context = { categories: c_names, config: @config }
+      categories = parser.render @config['template']['categories'], context
 
-      rendered_posts(categories_dir, categories)
+      [rendered_posts(categories_dir, categories), categories]
     end
 
     def rendered_posts(categories_dir, categories)
       posts = []
 
       categories_dir.each do |category, dir|
-        md_render = GeraBlog::RedcarpetDriver.new(category, @config, @footer)
+        md_render = GeraBlog::RedcarpetDriver.new(category, @config)
 
         Dir["#{dir}/*.md"].sort.reverse.each do |file|
           posts.push render_post(md_render, file, category, categories)
@@ -69,8 +68,7 @@ module GeraBlog
       post[:content] = md_render.to_html(
         post,
         post[:markdown],
-        categories,
-        @footer
+        categories
       )
 
       post

@@ -42,11 +42,13 @@ module GeraBlog
 
     def ini_template
       @config.add 'template',
-                  'category' => full_template_dir('category.html.erb'),
-                  'categories' => full_template_dir('categories.html.erb'),
-                  'feed' => full_template_dir('feed.xml.erb'),
-                  'post' => full_template_dir('post.html.erb'),
-                  'footer' => full_template_dir('footer.html.erb')
+                  'category' => full_template_dir('category.rbhtml'),
+                  'categories' => full_template_dir('categories.rbhtml'),
+                  'feed' => full_template_dir('feed.rbxml'),
+                  'post' => full_template_dir('post.rbhtml'),
+                  'footer' => full_template_dir('footer.rbhtml'),
+                  'header' => full_template_dir('header.rbhtml'),
+                  'index' => full_template_dir('index.rbhtml')
     end
 
     def initialize(root = './')
@@ -73,7 +75,7 @@ module GeraBlog
       )
     end
 
-    def create_dirs(posts)
+    def create_dirs
       GeraBlog.create_dir File.join(@config['dir']['output'], 'texts')
 
       GeraBlog.make_dest_dir(
@@ -82,69 +84,83 @@ module GeraBlog
         remove: true
       )
 
-      posts.map { |p| p[:category] }
-           .uniq
-           .map { |category| create_category_dir category }
+      @posts.map { |p| p[:category] }
+            .uniq
+            .map { |category| create_category_dir category }
     end
 
-    def write_parsed(file, parser, category, title, posts)
-      blog = {
-        name: @config['blog']['name'],
-        language: @config['blog']['language'],
-        url: title[:url],
-        description: title[:description],
+    def write_parsed(file, template, category, title, posts)
+      context = {
+        title: title,
+        posts: posts,
+        config: @config,
+        categories: @categories
       }
 
       File.write(
         File.join(@config['dir']['output'], 'texts', category, file),
-        parser.result(title: title, posts: posts, blog: blog, footer: @footer)
+        @parser.render(template, context)
       )
     end
 
-    def write_posts(posts)
-      create_dirs posts
+    def write_posts
+      create_dirs
 
-      posts.each do |post|
-        File.write(post[:filename], post[:content])
-      end
+      @posts.map { |post| File.write(post[:filename], post[:content]) }
     end
 
-    def write_general_rss(posts, parser_rss)
+    def write_general_rss
       File.write(
         File.join(@config['dir']['output'], 'feed.xml'),
-        parser_rss.result(blog: @config['blog'], posts: posts)
+        @parser.render(
+          @config['template']['feed'],
+          config: @config, posts: @posts
+        )
       )
     end
 
-    def write_by_category_files(posts, parser_rss, parser_html)
-      posts.map { |p| p[:category] }.uniq.each do |category|
+    def write_general_html
+      File.write(
+        File.join(@config['dir']['output'], 'index.html'),
+        @parser.render(
+          @config['template']['index'],
+          config: @config, categories: @categories
+        )
+      )
+    end
+
+    def write_by_category_files
+      @posts.map { |p| p[:category] }.uniq.each do |category|
         title = {
           url: File.join(@config['blog']['url'], 'texts', category),
           description: "#{@config['blog']['description']} (#{category})"
         }
 
-        category_posts = posts.select { |p| p[:category] == category }
+        category_posts = @posts.select { |p| p[:category] == category }
 
-        write_parsed('feed.xml', parser_rss, category, title, category_posts)
-        write_parsed('index.html', parser_html, category, title, category_posts)
+        write_parsed(
+          'feed.xml',
+          @config['template']['feed'],
+          category, title, category_posts
+        )
+        write_parsed(
+          'index.html',
+          @config['template']['category'],
+          category,
+          title,
+          category_posts
+        )
       end
     end
 
-    def render
-      GeraBlog::Render.new(@config).render
-    end
-
     def save
-      render = GeraBlog::Render.new @config
-      posts = render.render
-      @footer = render.footer
+      @posts, @categories = GeraBlog::Render.new(@config).render
+      @parser = Tenjin::Engine.new path: @config['dir']['templates']
 
-      parser_rss = Erubis::Eruby.new File.read(@config['template']['feed'])
-      parser_html = Erubis::Eruby.new File.read(@config['template']['category'])
-
-      write_posts posts
-      write_general_rss posts, parser_rss
-      write_by_category_files posts, parser_rss, parser_html
+      write_posts
+      write_general_rss
+      write_general_html
+      write_by_category_files
     end
   end
 end

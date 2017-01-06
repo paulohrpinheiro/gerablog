@@ -1,0 +1,21 @@
+<?rb #@ARGS config, posts ?>
+<?xml version="1.0"?>
+
+<rss version="2.0">
+  <channel>
+    <title>${@config['blog']['name']}</title>
+    <link>${@config['blog']['url']}</link>
+    <description>${@config['blog']['description']}</description>
+    <language>${@config['blog']['language']}</language>
+
+<?rb for post in posts ?>
+    <item>
+      <title>${post[:title]}</title>
+      <link>${post[:url]}</link>
+      <description>${post[:description]}</description>
+      <pubDate>${post[:date]}</pubDate>
+    </item>
+<?rb end ?>
+
+  </channel>
+</rss>

@@ -1,0 +1,14 @@
+<?rb #@ARGS config ?>
+<hr>
+
+<footer>
+  <p>Copyright &copy; 2016-2017, ${@config['blog']['name']}</p>
+  <ul>
+    <li>Static Blog Engine by
+      <a href="https://github.com/paulohrpinheiro/gerablog">GeraBlog</a>
+    </li>
+    <li>Code syntax highlight by
+      <a href="http://prismjs.com/">Prism</a>
+    </li>
+  </ul>
+</footer>

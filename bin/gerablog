@@ -47,7 +47,6 @@ gb = GeraBlog::Blog.new(options[:root]) unless options[:root].nil?
 gb.load_config options[:config] unless options[:config].nil?
 
 if options[:generate]
-  gb.render
   gb.save
 elsif options[:new]
   puts gb.config['dir'].values

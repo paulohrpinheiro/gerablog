@@ -1,0 +1,12 @@
+<?rb #@ARGS categories, config ?>
+<nav id="mainnav">
+  <ul>
+<?rb for category in categories do ?>
+    <li>
+      <a href="${config['blog']['url']}/texts/${category}/">
+        ${category}
+      </a>
+    </li>
+<?rb end ?>
+  </ul>
+</nav>
