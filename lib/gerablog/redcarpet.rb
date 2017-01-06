@@ -38,7 +38,8 @@ module GeraBlog
 
     def to_html(post, content, categories)
       post[:converted] = @render.render(content)
-      context = {
+      Tenjin::Engine.new.render(
+        @template['post'],
         config: @config,
         post: post,
         categories: categories,
@@ -46,9 +47,7 @@ module GeraBlog
           title: post[:title],
           description: post[:description]
         }
-      }
-      parser = Tenjin::Engine.new context
-      parser.render @template['post'], context
+      )
     end
   end
 end

@@ -14,7 +14,7 @@
   </ul>
 </footer>
 
- <script src="${@config['blog']['url']}/assets/js/prism.js"></script>
+<script src="${@config['blog']['url']}/assets/js/prism.js"></script>
 
 </body>
 </html>
