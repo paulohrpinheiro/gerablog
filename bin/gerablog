@@ -15,50 +15,36 @@ optparse = OptionParser.new do |opts|
     exit
   end
 
-  options[:config] = nil
-  opts.on('-c', '--config FILENAME', 'Use a config file.') do |value|
-    options[:config] = value
+  options[:new] = nil
+  opts.on('-n', '--new FILENAME', 'Create a new project.') do |value|
+    options[:new] = value
   end
 
-  options[:root] = './'
-  opts.on('-r', "--root FILENAME", "Project's root dir") do |value|
-    options[:root] = value
-  end
-
-  options[:new] = false
-  opts.on('-n', '--new', 'Create a new project.') do
-    options[:new] = true
-  end
-
-  options[:generate] = false
-  opts.on('-g', '--generate', 'Generate the static blog.') do |value|
+  options[:generate] = nil
+  opts.on('-g', '--generate FILENAME', 'Generate the static blog.') do |value|
     options[:generate] = value
   end
 end
 
 optparse.parse!
 
-gb = GeraBlog::Blog.new options[:root]
-gb.load_config options[:config] unless options[:config].nil?
-
 if options[:generate]
+  gb = GeraBlog::Blog.new
+  gb.load_config options[:generate] unless options[:generate].nil?
   gb.save
 elsif options[:new]
-  puts gb.config['dir'].values
-  gb.config['dir'].values.map { |dir| Dir.mkdir(dir) unless Dir.exist?(dir) }
+  gb = GeraBlog::Blog.new options[:new]
+  gb.config['dir'].values.map { |dir| GeraBlog.create_dir(dir) }
   GeraBlog.make_dest_dir(
     File.join(__dir__, '..', 'assets'),
-    gb.config['dir']['assets'],
-    remove: true
+    gb.config['dir']['root'],
   )
 
   GeraBlog.make_dest_dir(
     File.join(__dir__, '..', 'templates'),
-    gb.config['dir']['template'],
-    remove: true
+    gb.config['dir']['root'],
   )
 
-  puts gb.config['dir']['root']
   file = File.open(File.join(gb.config['dir']['root'], 'gerablog.conf'), 'w')
   gb.config.write(file)
 else
