@@ -6,7 +6,8 @@ Gem::Specification.new do |s|
   s.authors     = ['Paulo Henrique Rodrigues Pinheiro']
   s.email       = 'paulohrpinheiro@gmail.com'
   s.homepage    = 'https://github.com/paulohrpinheiro/gerablog'
-  s.files       = Dir['lib/**/*.rb']
+  s.files       = Dir['lib/**/*.rb', 'assets/**/*', 'templates/*']
+  puts s.files
   s.license     = 'MIT'
 
   s.executables << 'gerablog'
