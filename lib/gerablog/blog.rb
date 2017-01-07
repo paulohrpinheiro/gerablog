@@ -5,6 +5,8 @@ require_relative 'render'
 
 # GeraBlog - a Static Blog Generator
 module GeraBlog
+  VERSION = '0.1.0'.freeze
+
   def self.make_dest_dir(src, dest, remove: false)
     FileUtils.cp_r(src, dest, remove_destination: remove)
   end
@@ -55,7 +57,6 @@ module GeraBlog
     end
 
     def initialize(root = './')
-      puts root
       @config = ParseConfig.new
       ini_blog
       ini_dir root

@@ -1,13 +1,14 @@
+require_relative 'lib/gerablog'
+
 Gem::Specification.new do |s|
   s.name        = 'gerablog'
-  s.version     = '0.1.0'
+  s.version     = GeraBlog::VERSION
   s.summary     = 'My own static site generator.'
   s.description = 'Write posts in Markdown, publish a static blog in HTML'
   s.authors     = ['Paulo Henrique Rodrigues Pinheiro']
   s.email       = 'paulohrpinheiro@gmail.com'
   s.homepage    = 'https://github.com/paulohrpinheiro/gerablog'
   s.files       = Dir['lib/**/*.rb', 'assets/**/*', 'templates/*']
-  puts s.files
   s.license     = 'MIT'
 
   s.executables << 'gerablog'

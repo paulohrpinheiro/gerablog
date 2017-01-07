@@ -1,4 +1,3 @@
-require 'tenjin'
 require 'redcarpet'
 
 module GeraBlog
