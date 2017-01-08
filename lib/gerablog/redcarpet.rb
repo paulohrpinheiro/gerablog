@@ -10,7 +10,7 @@ module GeraBlog
       @lang = lang
     end
 
-    def block_code(code, language)
+    def block_code(code, language=nil)
       l = language.nil? ? @lang : language
       %(<pre><code class="language-#{l}">\n#{html_escape(code)}\n</code></pre>)
     end
