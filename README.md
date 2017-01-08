@@ -116,7 +116,11 @@ https://gist.github.com/paulohrpinheiro/20130e06355fc5bffe5865ce903dce63
 - [x] General RSS Feed
 - [x] By topic RSS feed
 - [ ] Tests!!!!!
+  - [ ] bin/gerablog
+  - [ ] lib/gerablog/blog.rb
+  - [x] lib/gerablog/redcarpet.rb
+  - [ ] lib/gerablog/render.rb
 - [x] create project in command line
 - [x] more complete command line options
-- [ ] Gemfile
+- [x] Gemfile
 - [ ] Txt2tags support
