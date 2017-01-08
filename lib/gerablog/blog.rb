@@ -67,6 +67,12 @@ module GeraBlog
       @config = ParseConfig.new(config_file)
     end
 
+    def save_config
+      @config.write(
+        File.open(File.join(@config['dir']['root'], 'gerablog.conf'), 'w')
+      )
+    end
+
     def create_category_dir(category)
       puts category
       category_dir = File.join config['dir']['output'], 'texts', category
@@ -77,6 +83,19 @@ module GeraBlog
         File.join(@config['dir']['texts'], category, 'images'),
         category_dir,
         remove: true
+      )
+    end
+
+    def new_blog
+      @config['dir'].values.map { |dir| GeraBlog.create_dir(dir) }
+      GeraBlog.make_dest_dir(
+        File.join(__dir__, '..', 'assets'),
+        @config['dir']['root']
+      )
+
+      GeraBlog.make_dest_dir(
+        File.join(__dir__, '..', 'templates'),
+        @config['dir']['root']
       )
     end
 
@@ -119,9 +138,8 @@ module GeraBlog
         File.join(@config['dir']['output'], 'feed.xml'),
         @parser.render(
           @config['template']['feed'],
-          config:
-            @config,
-            posts: @posts.take(Integer @config['blog']['itens_in_rss'])
+          config: @config,
+          posts: @posts.take(Integer(@config['blog']['itens_in_rss']))
         )
       )
     end

@@ -34,19 +34,8 @@ if options[:generate]
   gb.save
 elsif options[:new]
   gb = GeraBlog::Blog.new options[:new]
-  gb.config['dir'].values.map { |dir| GeraBlog.create_dir(dir) }
-  GeraBlog.make_dest_dir(
-    File.join(__dir__, '..', 'assets'),
-    gb.config['dir']['root'],
-  )
-
-  GeraBlog.make_dest_dir(
-    File.join(__dir__, '..', 'templates'),
-    gb.config['dir']['root'],
-  )
-
-  file = File.open(File.join(gb.config['dir']['root'], 'gerablog.conf'), 'w')
-  gb.config.write(file)
+  gb.new_blog
+  gb.save_config
 else
   puts optparse.parse! %w(--help)
 end
