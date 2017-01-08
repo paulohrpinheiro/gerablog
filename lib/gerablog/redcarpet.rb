@@ -3,6 +3,8 @@ require 'redcarpet'
 module GeraBlog
   # My subclass to perform parse with code bloques options
   class RedcarpetCustom < Redcarpet::Render::HTML
+    attr_reader :lang
+
     def initialize(lang:)
       super(prettify: true, escape_html: true)
       @lang = lang
@@ -35,12 +37,16 @@ module GeraBlog
       @render = Redcarpet::Markdown.new(RedcarpetCustom.new(lang: lang))
     end
 
-    def to_html(post, content, categories)
+    def converted(post, content)
       post[:converted] = @render.render(content)
+      post
+    end
+
+    def to_html(post, content, categories)
       Tenjin::Engine.new.render(
         @template['post'],
         config: @config,
-        post: post,
+        post: converted(post, content),
         categories: categories,
         title: {
           title: post[:title],
