@@ -8,9 +8,6 @@ class RedCarpetCustomTest < Minitest::Test
     @rc = GeraBlog::RedcarpetCustom.new(lang: LANGUAGE)
   end
 
-  def teardown
-  end
-
   def test_default_parameter
     assert_equal LANGUAGE, @rc.lang
   end
