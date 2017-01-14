@@ -22,8 +22,7 @@
 <?rb cssdir = File.join config['blog']['url'], 'assets', 'css' ?>
 
   <link rel="stylesheet" href="${cssdir}/gerablog.css">
-  <link rel="stylesheet" href="${cssdir}/prism.css">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.6.0/themes/prism.css" />
 </head>
 
 <body>
