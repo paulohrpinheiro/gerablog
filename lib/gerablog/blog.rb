@@ -8,6 +8,7 @@ module GeraBlog
   VERSION = '0.1.0'.freeze
 
   def self.make_dest_dir(src, dest, remove: false)
+    return unless Dir.exist? src 
     FileUtils.cp_r(src, dest, remove_destination: remove)
   end
 
@@ -56,15 +57,22 @@ module GeraBlog
                   'index' => full_template_dir('index.rbhtml')
     end
 
+    def reset_parser
+      @parser = Tenjin::Engine.new path: @config['dir']['templates']
+    end
+
     def initialize(root = './')
       @config = ParseConfig.new
       ini_blog
       ini_dir root
       ini_template
+
+      reset_parser
     end
 
     def load_config(config_file)
       @config = ParseConfig.new(config_file)
+      reset_parser
     end
 
     def save_config
@@ -74,7 +82,6 @@ module GeraBlog
     end
 
     def create_category_dir(category)
-      puts category
       category_dir = File.join config['dir']['output'], 'texts', category
 
       GeraBlog.create_dir category_dir
@@ -89,12 +96,12 @@ module GeraBlog
     def new_blog
       @config['dir'].values.map { |dir| GeraBlog.create_dir(dir) }
       GeraBlog.make_dest_dir(
-        File.join(__dir__, '..', 'assets'),
+        File.join(__dir__, '..', '..', 'assets'),
         @config['dir']['root']
       )
 
       GeraBlog.make_dest_dir(
-        File.join(__dir__, '..', 'templates'),
+        File.join(__dir__, '..', '..', 'templates'),
         @config['dir']['root']
       )
     end
@@ -113,7 +120,7 @@ module GeraBlog
             .map { |category| create_category_dir category }
     end
 
-    def write_parsed(file, template, category, title, posts)
+    def write_category_index(file, template, category, title, posts)
       context = {
         title: title,
         posts: posts,
@@ -169,12 +176,14 @@ module GeraBlog
 
         category_posts = @posts.select { |p| p[:category] == category }
 
-        write_parsed(
+        write_category_index(
           'feed.xml',
           @config['template']['feed'],
-          category, title, category_posts
+          category,
+          title,
+          category_posts
         )
-        write_parsed(
+        write_category_index(
           'index.html',
           @config['template']['category'],
           category,
@@ -186,7 +195,6 @@ module GeraBlog
 
     def save
       @posts, @categories = GeraBlog::Render.new(@config).render
-      @parser = Tenjin::Engine.new path: @config['dir']['templates']
 
       write_posts
       write_general_rss
