@@ -1,4 +1,4 @@
-require_relative 'lib/gerablog'
+require_relative 'lib/gerablog/blog'
 
 Gem::Specification.new do |s|
   s.name        = 'gerablog'
@@ -18,7 +18,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'redcarpet', ['~> 3.3']
   s.add_runtime_dependency 'tenjin', ['~> 0.7']
   s.add_runtime_dependency 'parseconfig', ['~> 1.0']
-  s.add_runtime_dependency 'minitest-reporters', ['~> 1.1']
 
+  s.add_development_dependency 'minitest-reporters', ['~> 1.1']
+  s.add_development_dependency 'nokogiri', ['~> 1.7']
   s.add_development_dependency 'rake', ['~> 0']
 end
