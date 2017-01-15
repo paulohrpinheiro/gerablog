@@ -51,16 +51,14 @@ Yes, we have a `--help` option:
     ➤ gerablog --help
     Usage: optparse [options]
         -h, --help                       Display this screen
-        -r FILENAME (default './'),      Root dir for project
-            --root
-        -c, --create                     Create a new project
-        -g, --generate                   Generate the static blog.
+        -n, --new FILENAME               Create a new project.
+        -g, --generate FILENAME          Generate the static blog.
 
 ###  `-n` or `--new`
 
 Create a new project:
 
-    ➤ gerablog --new --root /tmp/test
+    ➤ gerablog --new /tmp/test
 
 How the project looks like?
 
@@ -92,7 +90,7 @@ If `--root` is not informed, root will be `./`.
 
 For my [blog](https://paulohrpinheiro.xyz):
 
-    ➤ gerablog --generate --conf ~/Dropbox/projetos/paulohrpinheiro.xyz/blog/gerablog.conf
+    ➤ gerablog --generate ~/Dropbox/projetos/paulohrpinheiro.xyz/blog/gerablog.conf
     ruby
     diversos
     programadorbipolar
