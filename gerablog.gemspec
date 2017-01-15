@@ -21,5 +21,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'minitest-reporters', ['~> 1.1']
   s.add_development_dependency 'nokogiri', ['~> 1.7']
+  s.add_development_dependency 'rubocop', ['~> 0.46']
   s.add_development_dependency 'rake', ['~> 0']
 end
