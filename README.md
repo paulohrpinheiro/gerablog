@@ -40,6 +40,15 @@ Write in *Markdown*, publish in *HTML*.
 
     gem install gerablog
 
+## Hacking
+
+* clone the repo;
+* `bundle install`;
+* make changes (with tests!)
+* run all the tests (`rake`) and fix anything that appears wrong
+* run `rubocop` and fix all *offenses*!
+* send me a PR.
+
 ## Using
 
 The executable `gerablog` has this options:
@@ -86,7 +95,9 @@ How the project looks like?
 
 If `--root` is not informed, root will be `./`.
 
-## `-g` or `--generate`
+### `-g` or `--generate`
+
+### Deploy
 
 For my [blog](https://paulohrpinheiro.xyz):
 
@@ -100,9 +111,7 @@ For my [blog](https://paulohrpinheiro.xyz):
     rust
     python
 
-## Status
-
-pre-alpha !
+Copy `output` directory to your server :)
 
 ## History
 
@@ -111,4 +120,3 @@ This project started with a script I made to generate my site https://paulohrpin
 The script is in this gist:
 
 https://gist.github.com/paulohrpinheiro/20130e06355fc5bffe5865ce903dce63
-
