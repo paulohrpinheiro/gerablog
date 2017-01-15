@@ -1,7 +1,6 @@
 # GeraBlog
 
 [![Code Climate](https://codeclimate.com/github/paulohrpinheiro/gerablog/badges/gpa.svg)](https://codeclimate.com/github/paulohrpinheiro/gerablog)
-[![Test Coverage](https://codeclimate.com/github/paulohrpinheiro/gerablog/badges/coverage.svg)](https://codeclimate.com/github/paulohrpinheiro/gerablog/coverage)
 [![Issue Count](https://codeclimate.com/github/paulohrpinheiro/gerablog/badges/issue_count.svg)](https://codeclimate.com/github/paulohrpinheiro/gerablog)
 
 *Blog Generator - my own static site generator*
@@ -115,16 +114,3 @@ The script is in this gist:
 
 https://gist.github.com/paulohrpinheiro/20130e06355fc5bffe5865ce903dce63
 
-## TODO
-
-- [x] General RSS Feed
-- [x] By topic RSS feed
-- [ ] Tests!!!!!
-  - [ ] bin/gerablog
-  - [ ] lib/gerablog/blog.rb
-  - [x] lib/gerablog/redcarpet.rb
-  - [ ] lib/gerablog/render.rb
-- [x] create project in command line
-- [x] more complete command line options
-- [x] Gemfile
-- [ ] Txt2tags support
