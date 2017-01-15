@@ -82,10 +82,7 @@ class BlogTest < Minitest::Test
         output
         assets
         assets/css
-        assets/css/prism.css
         assets/css/gerablog.css
-        assets/js
-        assets/js/prism.js
         texts
       ).map { |d| File.join blogdir, d }
        .sort
@@ -115,26 +112,19 @@ class BlogTest < Minitest::Test
       texts/#{category}/images/img.png
       assets
       assets/css
-      assets/css/prism.css
       assets/css/gerablog.css
-      assets/js
-      assets/js/prism.js
     ).map { |d| File.join @project_dir, 'output', d }
      .sort
 
     assert_equal must_have, Dir["#{@project_dir}/output/**/*"].sort
   end
 
-  def test_write_category_index
-    @gb.new_blog
-
+  def prepare_test_write_category_index title
     category = random_string
     filename = random_string
 
     html_filename = "#{filename}.html"
-    md_filename = "#{filename}.md"
 
-    md_file = File.join @project_dir, 'texts', category, md_filename
     html_file = File.join(
       @project_dir, 'output', 'texts', category, html_filename
     )
@@ -143,8 +133,6 @@ class BlogTest < Minitest::Test
       @gb.config['dir']['output'], 'texts', category
     )
 
-    title = { title: random_string, description: random_string}
-    content = %q(Content is here!)
     posts = [
       {
         url: "proto://post.url",
@@ -162,7 +150,14 @@ class BlogTest < Minitest::Test
       posts
     )
 
-    generated_html = Nokogiri::HTML(open html_file)
+    Nokogiri::HTML open html_file
+  end
+
+  def test_write_category_index
+    @gb.new_blog
+    title = { title: random_string, description: random_string}
+
+    generated_html = prepare_test_write_category_index title
 
     assert @gb.config['blog']['title'], generated_html.title
 
@@ -170,9 +165,10 @@ class BlogTest < Minitest::Test
       title[:title],
       generated_html.at('meta[name="description"]')['content']
 
-    assert generated_html.at_css('header')
-                         .text
-                         .include? @gb.instance_variable_get('@categories')
+    assert\
+      generated_html.at_css('header')
+                    .text
+                    .include? @gb.instance_variable_get('@categories')
   end
 
   def test_write_posts
@@ -200,22 +196,21 @@ class BlogTest < Minitest::Test
     @gb.write_posts
 
     categories.each do |c|
-       assert Dir.exist?(File.join @gb.config['dir']['output'], 'texts', c)
-     end
+       assert Dir.exist? File.join @gb.config['dir']['output'], 'texts', c
+    end
 
-     posts.each  do |p|
-       assert File.exist?(
-        File.join(
-          @gb.config['dir']['output'],
-          'texts',
-          p[:category],
-          File.basename(p[:filename])
-        )
-      )
-     end
+    posts.each  do |p|
+      assert File.exist?(
+       File.join(
+         @gb.config['dir']['output'],
+         'texts',
+         p[:category],
+         File.basename(p[:filename])
+       )
+     )
+    end
   end
 
   def test_write_general_rss
-
   end
 end
