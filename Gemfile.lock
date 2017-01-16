@@ -51,13 +51,13 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  codeclimate-test-reporter (~> 1.0.0)
+  codeclimate-test-reporter (~> 1.0, >= 1.0.0)
   gerablog!
   minitest-reporters (~> 1.1)
   nokogiri (~> 1.7)
   rake (~> 0)
   rubocop (~> 0.46)
-  simplecov
+  simplecov (~> 0)
 
 BUNDLED WITH
    1.13.7
