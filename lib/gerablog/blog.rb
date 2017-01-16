@@ -5,8 +5,6 @@ require_relative 'render'
 
 # GeraBlog - a Static Blog Generator
 module GeraBlog
-  VERSION = '0.1.0'.freeze
-
   def self.make_dest_dir(src, dest, remove: false)
     return unless Dir.exist? src 
     FileUtils.cp_r(src, dest, remove_destination: remove)

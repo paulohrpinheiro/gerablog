@@ -1,4 +1,4 @@
-require_relative 'lib/gerablog/blog'
+require_relative 'lib/gerablog/version'
 
 Gem::Specification.new do |s|
   s.name        = 'gerablog'
