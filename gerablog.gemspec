@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'tenjin', ['~> 0.7']
   s.add_runtime_dependency 'parseconfig', ['~> 1.0']
 
+  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'codeclimate-test-reporter', '~> 1.0.0'
   s.add_development_dependency 'minitest-reporters', ['~> 1.1']
   s.add_development_dependency 'nokogiri', ['~> 1.7']
   s.add_development_dependency 'rubocop', ['~> 0.46']
