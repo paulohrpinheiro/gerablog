@@ -38,7 +38,7 @@ module GeraBlog
     end
 
     def converted(post, content)
-      post[:converted] = @render.render(content)
+      post[:converted] = @render.render(content.gsub(/^#/,'##'))
       post
     end
 
