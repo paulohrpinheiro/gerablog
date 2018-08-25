@@ -1,10 +1,21 @@
-<?rb #@ARGS config, categories ?>
+<?rb #@ARGS config, categories, posts ?>
 <?rb import config['template']['header'] ?>
 
 <article>
   <p>
     This is <a href="https://github.com/paulohpinheiro/gerablog">Gerablog</a>
   </p>
+</article>
+
+<article>
+    <h3>Recent posts</h3>
+
+    <?rb for post in posts ?>
+      <a href="${post[:url]}">
+        <h3 class="textcal">${post[:title]}</h3>
+        <p class="textcal">${post[:description]}</p>
+      </a>
+    <?rb end ?>
 </article>
 
 <?rb import config['template']['footer'] ?>

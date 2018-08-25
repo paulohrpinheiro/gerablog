@@ -6,7 +6,8 @@ require_relative 'render'
 # GeraBlog - a Static Blog Generator
 module GeraBlog
   def self.make_dest_dir(src, dest, remove: false)
-    return unless Dir.exist? src 
+    return unless Dir.exist? src
+
     FileUtils.cp_r(src, dest, remove_destination: remove)
   end
 
@@ -28,7 +29,8 @@ module GeraBlog
                   'name' => 'GeraBlog Static Blog Generator',
                   'description' => 'GeraBlog - My own static site generator',
                   'language' => 'pt-br',
-                  'itens_in_rss' => '50'
+                  'itens_in_rss' => '50',
+                  'itens_in_index' => 10
     end
 
     def ini_dir(root)
@@ -156,7 +158,8 @@ module GeraBlog
         title: {
           title: @config['blog']['title'],
           description: @config['blog']['description']
-        }
+        },
+        posts: @posts.take(Integer(@config['blog']['itens_in_index']))
       }
 
       File.write(
@@ -193,6 +196,8 @@ module GeraBlog
 
     def save
       @posts, @categories = GeraBlog::Render.new(@config).render
+
+      @posts.sort_by! { |p| File.basename p[:filename] }.reverse!
 
       write_posts
       write_general_rss
