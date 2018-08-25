@@ -6,9 +6,20 @@ body {
   width: 90%;
 }
 
-a:link, a:visited { color: royalblue; text-decoration: none; }
-a:hover { color: blue; text-decoration: underline; font-weight: 500;  }
-a:active { color: white; }
+a:link, a:visited {
+    color: royalblue;
+    text-decoration: none;
+}
+
+a:hover {
+    color: blue;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+a:active {
+    color: white;
+}
 
 h1 {
   color: green;
