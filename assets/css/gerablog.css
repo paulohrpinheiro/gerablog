@@ -1,11 +1,9 @@
 body {
-  font-family: Verdana, Geneva, sans-serif;
-
   background-color: white;
   color: black;
-
-  width: 90%;
+  font-family: Verdana, Geneva, sans-serif;
   margin: 0 auto;
+  width: 90%;
 }
 
 a:link, a:visited { color: royalblue; text-decoration: none; }
@@ -32,21 +30,21 @@ footer  {
 }
 
 #mainnav {
-  padding: 0 0;
   margin-bottom: 22px;
+  padding: 0 0;
 }
 
 #mainnav ul {
+  border-left: 1px solid black;
+  list-style-type: none;
   margin: 0 0 0 0;
   padding: 0;
-  list-style-type: none;
-  border-left: 1px solid black;
 }
 
 #mainnav li {
+  border-right: 1px solid black;
   display: inline;
   padding: 0 10px;
-  border-right: 1px solid black;
 }
 
 h3.textcal {
@@ -56,13 +54,13 @@ h3.textcal {
 
 p.textcal {
   color: black;
+  height: auto;
   margin-top: 0;
+  max-height:300px;
+  max-width:300px;
 }
 
 img {
   vertical-align: top;
   width: auto;
-  height: auto;
-  max-width:300px;
-  max-height:300px;
 }
