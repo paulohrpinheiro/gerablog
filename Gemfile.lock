@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    gerablog (0.1.0)
+    gerablog (0.2.0)
       parseconfig (~> 1.0)
       redcarpet (~> 3.3)
       tenjin (~> 0.7)
@@ -60,4 +60,4 @@ DEPENDENCIES
   simplecov (~> 0)
 
 BUNDLED WITH
-   1.13.7
+   1.16.2
