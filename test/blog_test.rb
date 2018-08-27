@@ -31,7 +31,7 @@ class BlogTest < Minitest::Test
 
   def test_config_blog_has_all_elements
      assert\
-      %w(description itens_in_rss language name root title url) ==
+      %w(description itens_in_index itens_in_rss language name root title url) ==
       @gb.config['blog'].keys.sort
   end
 
